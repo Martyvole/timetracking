@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/icons/icon-192x192.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>FlowTime Pro</title>
+
+    <!-- PWA Meta Tags for iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FlowTime Pro">
+    <meta name="theme-color" content="#0A0A15">
+    
+    <!-- App Icons -->
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Recharts for Charts -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.min.js"></script>
+
+    <!-- Google Fonts to approximate SF Pro & SF Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Roboto+Mono:wght@100..700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #000010;
+            --secondary: #0A0A15;
+            --accent-1: #00F5FF; /* Cyber cyan */
+            --accent-2: #FF0080; /* Neon pink */
+            --accent-3: #9D4EDD; /* Electric purple */
+            --glass: rgba(20, 20, 35, 0.6);
+            --glow: rgba(0, 245, 255, 0.2);
+            --soft-glow: rgba(0, 245, 255, 0.1);
+        }
+        
+        /* Apply safe area insets */
+        body {
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+            background-color: var(--primary);
+            font-family: 'Manrope', 'SF Pro Text', sans-serif;
+        }
+
+        .font-display {
+             font-family: 'Manrope', 'SF Pro Display', sans-serif;
+        }
+
+        .font-timer {
+             font-family: 'Roboto Mono', 'SF Mono', monospace;
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.1.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
+    "react/": "https://aistudiocdn.com/react@^19.1.1/",
+    "recharts": "https://aistudiocdn.com/recharts@^3.2.0"
+  }
+}
+</script>
+</head>
+<body class="bg-[#000010]">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+</body>
+</html>
