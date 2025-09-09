@@ -1,5 +1,4 @@
-
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import type { Project, TimeEntry, Screen, User } from './types';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
@@ -52,14 +51,15 @@ export const GlassCard: React.FC<{ children: React.ReactNode; className?: string
     </div>
 );
 
-export const FloatingButton: React.FC<{ onClick: () => void; children: React.ReactNode; className?: string, ariaLabel: string }> = ({ onClick, children, className, ariaLabel }) => (
+export const FloatingButton: React.FC<{ onClick: () => void; children: React.ReactNode; className?: string, ariaLabel: string, disabled?: boolean }> = ({ onClick, children, className, ariaLabel, disabled }) => (
     <button
         onClick={onClick}
         aria-label={ariaLabel}
-        className={`relative group flex items-center justify-center transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95 ${className}`}
+        disabled={disabled}
+        className={`relative group flex items-center justify-center transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95 ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
-        <div className="absolute inset-0 bg-gradient-to-br from-[#00F5FF] via-[#9D4EDD] to-[#FF0080] rounded-full blur-xl group-hover:blur-2xl transition-all duration-300 opacity-60 group-hover:opacity-80"></div>
-        <div className="relative w-full h-full bg-gradient-to-br from-[rgba(0,245,255,0.8)] via-[rgba(157,78,221,0.8)] to-[rgba(255,0,128,0.8)] text-white rounded-full flex items-center justify-center shadow-lg">
+        <div className={`absolute inset-0 bg-gradient-to-br from-[#00F5FF] via-[#9D4EDD] to-[#FF0080] rounded-full blur-xl group-hover:blur-2xl transition-all duration-300 opacity-60 group-hover:opacity-80 ${disabled ? 'opacity-30' : ''}`}></div>
+        <div className={`relative w-full h-full bg-gradient-to-br from-[rgba(0,245,255,0.8)] via-[rgba(157,78,221,0.8)] to-[rgba(255,0,128,0.8)] text-white rounded-full flex items-center justify-center shadow-lg ${disabled ? 'from-[rgba(128,128,128,0.5)] to-[rgba(80,80,80,0.5)]' : ''}`}>
             {children}
         </div>
     </button>
@@ -614,7 +614,7 @@ export const TimeEntryListScreen: React.FC<TimeEntryListScreenProps> = ({ entrie
 
     return (
         <div className="p-4 space-y-4 text-white relative h-full flex flex-col">
-            <h2 className="font-display text-4xl font-extrabold text-center">{t('historyTitle')}</h2>
+            <h2 className="font-display text-4xl font-extrabold text-center px-2">{t('historyTitle')}</h2>
             <div className="flex-grow overflow-y-auto pr-2 space-y-6">
                 {entries.length === 0 ? (
                      <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
