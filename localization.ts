@@ -2,64 +2,110 @@ export const translations = {
   en: {
     // Nav
     timer: 'Timer',
-    history: 'History',
+    history: 'Logs',
     stats: 'Stats',
-    projects: 'Projects',
+    installations: 'Installations',
     settings: 'Settings',
 
+    // User Selection
+    welcome: 'Welcome to',
+    appName: 'Solar Work Report',
+    selectOrCreateProfile: 'Select or create a profile',
+    enterNewUserName: 'Enter new user name...',
+    createUser: 'Create User',
+
+    // Admin Login
+    adminLogin: 'Admin Login',
+    password: 'Password',
+    login: 'Login',
+    wrongPassword: 'Wrong password.',
+
+    // General UI
+    offline: 'Offline',
+    save: 'Save',
+    cancel: 'Cancel',
+
     // Timer Screen
-    noProjectSelected: 'No Project Selected',
+    noInstallationSelected: 'No Installation Selected',
     startTimer: 'Start Timer',
     pauseTimer: 'Pause Timer',
     resumeTimer: 'Resume Timer',
     stopTimer: 'Stop Timer',
-    selectProjectFirst: 'Please select a project first.',
-    startFrom: 'Start from...',
-    startFromPrompt: 'How many minutes ago did you start?',
-
+    selectInstallationFirst: 'Please select an installation first.',
+    adminCannotTrackTime: 'Admin cannot track time. Please switch to a user profile.',
+    
     // History Screen
-    historyTitle: 'History',
-    noTimeEntries: 'No Time Entries Yet',
-    noTimeEntriesDesc: 'Your recorded sessions will appear here.',
+    historyTitle: 'Work Logs',
+    noWorkLogs: 'No Work Logs Yet',
+    noWorkLogsDesc: 'Your recorded sessions and panel logs will appear here.',
     today: 'Today',
     yesterday: 'Yesterday',
-    unknownProject: 'Unknown Project',
-    deleteEntryConfirm: 'Are you sure you want to delete this time entry?',
-    addEntry: 'Add Time Entry',
+    unknownInstallation: 'Unknown Installation',
+    deleteEntryConfirm: 'Are you sure you want to delete this work log?',
+    addLog: 'Add Work Log',
+    addEntryChoiceTitle: 'What to log?',
+    addTimeEntry: 'Time Entry',
+    addPanelLog: 'Panel Log',
+    panels: 'panels',
+    viewDetails: 'View Details',
+
+    // Work Entry Detail Modal
+    workEntryDetails: 'Work Entry Details',
+    notes: 'Notes',
+    photo: 'Photo',
+    noNotes: 'No notes for this entry.',
+    noPhoto: 'No photo attached.',
+    duration: 'Duration',
+    period: 'Period',
 
     // Time Entry Modal
-    newEntry: 'New Entry',
-    editEntry: 'Edit Entry',
-    project: 'Project',
-    selectProject: 'Select a project',
+    newTimeEntry: 'New Time Entry',
+    editTimeEntry: 'Edit Time Entry',
+    installation: 'Installation',
+    selectInstallation: 'Select an installation',
     startDate: 'Start Date',
     startTime: 'Start Time',
     endDate: 'End Date',
     endTime: 'End Time',
     endTimeAfterStart: 'End time must be after start time.',
+    addNote: 'Add a note (optional)',
+    addPhoto: 'Add Photo',
+
+    // Panel Log Modal
+    newPanelLog: 'New Panel Log',
+    editPanelLog: 'Edit Panel Log',
+    date: 'Date',
+    panelsInstalled: 'Panels Installed',
 
     // Stats Screen
     statistics: 'Statistics',
     forUser: 'for {0}',
     totalHours: 'Total Hours',
+    totalPanels: 'Total Panels',
     totalEarnings: 'Total Earnings',
     weeklyHours: 'Weekly Hours',
     allUsers: 'All Users',
+    filterInstallation: 'Filter Installation',
+    allInstallations: 'All Installations',
+    generateAIReport: 'Generate AI Report',
+    generatingReport: 'Generating Report...',
+    weeklySummary: 'Weekly AI Summary',
+    aiReportError: 'Could not generate AI report. Please try again later.',
     
-    // Projects Screen
-    projectsTitle: 'Projects',
-    noProjects: 'No Projects Yet',
-    noProjectsDesc: 'Click the \'+\' button to create your first project.',
-    addProject: 'Add New Project',
+    // Installations Screen
+    installationsTitle: 'Installations',
+    noInstallations: 'No Installations Yet',
+    noInstallationsDesc: 'Click the \'+\' button to create your first installation site.',
+    addInstallation: 'Add New Installation',
     edit: 'Edit',
     delete: 'Delete',
-    deleteProjectConfirm: 'Are you sure you want to delete this project?',
-    deleteProjectWithEntriesConfirm: 'This project has {0} time entries. Are you sure you want to delete the project and all its associated entries? This action cannot be undone.',
+    deleteInstallationConfirm: 'Are you sure you want to delete this installation?',
+    deleteInstallationWithEntriesConfirm: 'This installation has {0} work logs. Are you sure you want to delete it and all associated logs? This action cannot be undone.',
 
-    // Project Modal
-    newProject: 'New Project',
-    editProject: 'Edit Project',
-    projectName: 'Project Name',
+    // Installation Modal
+    newInstallation: 'New Installation',
+    editInstallation: 'Edit Installation',
+    installationName: 'Installation Name (e.g. site address)',
     color: 'Color',
     
     // Settings Screen
@@ -67,97 +113,132 @@ export const translations = {
     userProfile: 'User Profile',
     loggedInAs: 'Logged in as:',
     switchUser: 'Switch User',
-    general: 'General',
-    hourlyRate: 'Hourly Rate',
+    rates: 'Rates',
+    hourlyWage: 'Hourly Wage',
+    ratePerPanel: 'Rate per Panel',
     currencySymbol: 'Currency Symbol (e.g., CZK, EUR, USD)',
     language: 'Language',
     dataManagement: 'Data Management',
     exportData: 'Export Data',
     importData: 'Import Data',
     dangerZone: 'Danger Zone',
-    dangerZoneDesc: 'This action cannot be undone. This will permanently delete all your projects and time entries for the current user.',
+    dangerZoneDesc: 'This action cannot be undone. This will permanently delete all your installations and work logs for the current user.',
     resetAllData: 'Reset All Data',
     exportError: 'Error exporting data.',
-    importConfirm: 'Are you sure? This will add the imported projects and entries to the current user\'s data.',
+    importConfirm: 'Are you sure? This will add the imported installations and logs to the current user\'s data.',
     importSuccess: 'Data imported successfully!',
     importError: 'Error importing data. Please check the file format.',
-    resetConfirm: 'DANGER: Are you sure you want to delete all projects and entries for {0}? This is irreversible.',
-    resetSuccess: 'All data for {0} has been deleted.',
-    
-    // User Selection Screen
-    welcome: 'Welcome to',
-    selectOrCreateProfile: 'Select or Create a Profile',
-    enterNewUserName: 'Enter new user name',
-    createUser: 'Create User',
-
-    // General
-    cancel: 'Cancel',
-    save: 'Save',
-
-    // Offline Indicator
-    offline: 'You are offline',
+    resetConfirm: 'DANGER: Are you sure you want to delete all installations and logs for {0}? This is irreversible.',
+    // FIX: Add missing translation key for reset success message.
+    resetSuccess: 'All data for {0} has been successfully reset.',
   },
   cs: {
     // Nav
     timer: 'Časovač',
-    history: 'Historie',
+    history: 'Záznamy',
     stats: 'Statistiky',
-    projects: 'Projekty',
+    installations: 'Instalace',
     settings: 'Nastavení',
 
+    // User Selection
+    welcome: 'Vítejte v',
+    appName: 'Solar Work Report',
+    selectOrCreateProfile: 'Vyberte nebo vytvořte profil',
+    enterNewUserName: 'Zadejte jméno nového uživatele...',
+    createUser: 'Vytvořit uživatele',
+
+    // Admin Login
+    adminLogin: 'Admin přihlášení',
+    password: 'Heslo',
+    login: 'Přihlásit',
+    wrongPassword: 'Špatné heslo.',
+
+    // General UI
+    offline: 'Offline',
+    save: 'Uložit',
+    cancel: 'Zrušit',
+
     // Timer Screen
-    noProjectSelected: 'Není vybrán projekt',
+    noInstallationSelected: 'Není vybrána instalace',
     startTimer: 'Spustit časovač',
     pauseTimer: 'Pozastavit',
     resumeTimer: 'Pokračovat',
     stopTimer: 'Zastavit',
-    selectProjectFirst: 'Prosím, nejprve vyberte projekt.',
-    startFrom: 'Spustit od...',
-    startFromPrompt: 'Před kolika minutami jste začali?',
-
+    selectInstallationFirst: 'Prosím, nejprve vyberte instalaci.',
+    adminCannotTrackTime: 'Admin nemůže sledovat čas. Přepněte se na uživatelský profil.',
+    
     // History Screen
-    historyTitle: 'Historie',
-    noTimeEntries: 'Zatím žádné záznamy',
-    noTimeEntriesDesc: 'Vaše zaznamenané relace se zobrazí zde.',
+    historyTitle: 'Pracovní záznamy',
+    noWorkLogs: 'Zatím žádné záznamy',
+    noWorkLogsDesc: 'Vaše zaznamenané směny a instalace panelů se zobrazí zde.',
     today: 'Dnes',
     yesterday: 'Včera',
-    unknownProject: 'Neznámý projekt',
-    deleteEntryConfirm: 'Opravdu chcete smazat tento časový záznam?',
-    addEntry: 'Přidat záznam',
+    unknownInstallation: 'Neznámá instalace',
+    deleteEntryConfirm: 'Opravdu chcete smazat tento pracovní záznam?',
+    addLog: 'Přidat záznam',
+    addEntryChoiceTitle: 'Co chcete zaznamenat?',
+    addTimeEntry: 'Hodinový záznam',
+    addPanelLog: 'Záznam panelů',
+    panels: 'panely',
+    viewDetails: 'Zobrazit detaily',
+
+    // Work Entry Detail Modal
+    workEntryDetails: 'Detail pracovního záznamu',
+    notes: 'Poznámky',
+    photo: 'Fotka',
+    noNotes: 'K tomuto záznamu nejsou žádné poznámky.',
+    noPhoto: 'Není připojena žádná fotografie.',
+    duration: 'Doba trvání',
+    period: 'Období',
 
     // Time Entry Modal
-    newEntry: 'Nový záznam',
-    editEntry: 'Upravit záznam',
-    project: 'Projekt',
-    selectProject: 'Vyberte projekt',
+    newTimeEntry: 'Nový hodinový záznam',
+    editTimeEntry: 'Upravit hodinový záznam',
+    installation: 'Instalace',
+    selectInstallation: 'Vyberte instalaci',
     startDate: 'Datum začátku',
     startTime: 'Čas začátku',
     endDate: 'Datum konce',
     endTime: 'Čas konce',
     endTimeAfterStart: 'Čas konce musí být po čase začátku.',
-    
+    addNote: 'Přidat poznámku (volitelné)',
+    addPhoto: 'Přidat fotku',
+
+    // Panel Log Modal
+    newPanelLog: 'Nový záznam panelů',
+    editPanelLog: 'Upravit záznam panelů',
+    date: 'Datum',
+    panelsInstalled: 'Instalovaných panelů',
+
     // Stats Screen
     statistics: 'Statistiky',
     forUser: 'pro {0}',
     totalHours: 'Celkem hodin',
+    totalPanels: 'Celkem panelů',
     totalEarnings: 'Celkový výdělek',
-    weeklyHours: 'Týdenní přehled',
+    weeklyHours: 'Týdenní hodiny',
     allUsers: 'Všichni uživatelé',
-
-    // Projects Screen
-    projectsTitle: 'Projekty',
-    noProjects: 'Zatím žádné projekty',
-    noProjectsDesc: 'Klikněte na tlačítko \'+\' pro vytvoření prvního projektu.',
-    addProject: 'Přidat projekt',
+    filterInstallation: 'Filtrovat instalaci',
+    allInstallations: 'Všechny instalace',
+    generateAIReport: 'Generovat AI report',
+    generatingReport: 'Generuji report...',
+    weeklySummary: 'Týdenní AI souhrn',
+    aiReportError: 'Nepodařilo se vygenerovat AI report. Zkuste to prosím později.',
+    
+    // Installations Screen
+    installationsTitle: 'Instalace',
+    noInstallations: 'Zatím žádné instalace',
+    noInstallationsDesc: 'Kliknutím na tlačítko \'+\' vytvoříte svou první stavbu.',
+    addInstallation: 'Přidat novou instalaci',
     edit: 'Upravit',
     delete: 'Smazat',
-    deleteProjectConfirm: 'Opravdu chcete smazat tento projekt?',
-    deleteProjectWithEntriesConfirm: 'Tento projekt má {0} časových záznamů. Opravdu chcete smazat projekt a všechny související záznamy? Tuto akci nelze vrátit zpět.',
+    deleteInstallationConfirm: 'Opravdu chcete smazat tuto instalaci?',
+    deleteInstallationWithEntriesConfirm: 'Tato instalace má {0} pracovních záznamů. Opravdu ji chcete smazat i se všemi záznamy? Tuto akci nelze vrátit.',
 
-    // Project Modal
-    newProject: 'Nový projekt',
-    editProject: 'Upravit projekt',
-    projectName: 'Název projektu',
+    // Installation Modal
+    newInstallation: 'Nová instalace',
+    editInstallation: 'Upravit instalaci',
+    installationName: 'Název instalace (např. adresa stavby)',
     color: 'Barva',
     
     // Settings Screen
@@ -165,34 +246,23 @@ export const translations = {
     userProfile: 'Uživatelský profil',
     loggedInAs: 'Přihlášen jako:',
     switchUser: 'Změnit uživatele',
-    general: 'Obecné',
-    hourlyRate: 'Hodinová sazba',
-    currencySymbol: 'Symbol měny (např. Kč, €, $)',
+    rates: 'Sazby',
+    hourlyWage: 'Hodinová mzda',
+    ratePerPanel: 'Sazba za panel',
+    currencySymbol: 'Symbol měny (např. CZK, EUR, USD)',
     language: 'Jazyk',
     dataManagement: 'Správa dat',
     exportData: 'Exportovat data',
     importData: 'Importovat data',
     dangerZone: 'Nebezpečná zóna',
-    dangerZoneDesc: 'Tuto akci nelze vrátit zpět. Trvale smaže všechny vaše projekty a časové záznamy pro aktuálního uživatele.',
+    dangerZoneDesc: 'Tuto akci nelze vrátit. Trvale smažete všechny své instalace a pracovní záznamy pro aktuálního uživatele.',
     resetAllData: 'Resetovat všechna data',
     exportError: 'Chyba při exportu dat.',
-    importConfirm: 'Jste si jisti? Tímto přidáte importované projekty a záznamy k datům aktuálního uživatele.',
+    importConfirm: 'Jste si jistý? Tímto přidáte importované instalace a záznamy k datům aktuálního uživatele.',
     importSuccess: 'Data byla úspěšně importována!',
     importError: 'Chyba při importu dat. Zkontrolujte prosím formát souboru.',
-    resetConfirm: 'POZOR: Opravdu chcete smazat všechny projekty a záznamy pro uživatele {0}? Tato akce je nevratná.',
-    resetSuccess: 'Všechna data pro uživatele {0} byla smazána.',
-    
-    // User Selection Screen
-    welcome: 'Vítejte v',
-    selectOrCreateProfile: 'Vyberte nebo vytvořte profil',
-    enterNewUserName: 'Zadejte jméno nového uživatele',
-    createUser: 'Vytvořit uživatele',
-
-    // General
-    cancel: 'Zrušit',
-    save: 'Uložit',
-
-    // Offline Indicator
-    offline: 'Jste offline',
+    resetConfirm: 'POZOR: Opravdu chcete smazat všechny instalace a záznamy pro uživatele {0}? Tato akce je nevratná.',
+    // FIX: Add missing translation key for reset success message.
+    resetSuccess: 'Všechna data pro uživatele {0} byla úspěšně resetována.',
   }
 };

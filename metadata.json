@@ -1,5 +1,7 @@
 {
-  "name": "FlowTime Pro",
-  "description": "An ultra-modern PWA time tracking application designed for iPhone 15 Pro, featuring a glassmorphism/neumorphism hybrid design, real-time earning calculation, advanced statistics, and offline capabilities.",
-  "requestFramePermissions": []
+  "name": "Solar Work Report",
+  "description": "A PWA for tracking work on solar power plant installations, supporting both hourly wages for construction and piece-rate for panel mounting.",
+  "requestFramePermissions": [
+    "camera"
+  ]
 }

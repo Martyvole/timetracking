@@ -1,40 +1,53 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import type { Project, TimeEntry, Screen, User } from './types';
+import type { Installation, TimeEntry, PanelEntry, WorkEntry, Screen, User } from './types';
 import { useLocalStorage, useHapticFeedback, useTranslation } from './hooks';
 import { 
-    BottomNav, TimerDisplay, StatsDashboard, ProjectList, ProjectModal, SettingsScreen, UserSelectionScreen, 
-    OfflineIndicator, FloatingButton, PlayIcon, PauseIcon, StopIcon, TimeEntryListScreen, TimeEntryModal
+    BottomNav, TimerDisplay, StatsDashboard, InstallationList, InstallationModal, SettingsScreen, UserSelectionScreen, 
+    OfflineIndicator, FloatingButton, PlayIcon, PauseIcon, StopIcon, WorkLogScreen, TimeEntryModal, PanelLogModal, AddEntryChoiceModal, AdminLoginModal,
+    WorkEntryDetailModal
 } from './components';
 
 // Initial data for a new user
-const initialProjects: Project[] = [];
-const initialTimeEntries: TimeEntry[] = [];
+const initialInstallations: Installation[] = [];
+const initialWorkEntries: WorkEntry[] = [];
+const ADMIN_PASSWORD = 'Zacnetemakathovada2025';
+const ADMIN_USER: User = { id: 'admin', name: 'Admin', isAdmin: true };
 
 function App() {
   const { t, setLanguage, language } = useTranslation();
   const triggerHaptic = useHapticFeedback();
   
   // --- State Management ---
-  const [users, setUsers] = useLocalStorage<User[]>('flowtime_users', []);
-  const [currentUserId, setCurrentUserId] = useLocalStorage<string | null>('flowtime_current_user', null);
+  const [users, setUsers] = useLocalStorage<User[]>('solarwork_users', []);
+  const [currentUserId, setCurrentUserId] = useLocalStorage<string | null>('solarwork_current_user', null);
   
-  const [projects, setProjects] = useLocalStorage<Project[]>(`flowtime_projects_${currentUserId}`, initialProjects);
-  const [timeEntries, setTimeEntries] = useLocalStorage<TimeEntry[]>(`flowtime_entries_${currentUserId}`, initialTimeEntries);
+  // Data for the current logged-in user
+  const [installations, setInstallations] = useLocalStorage<Installation[]>(`solarwork_installations_${currentUserId}`, initialInstallations);
+  const [workEntries, setWorkEntries] = useLocalStorage<WorkEntry[]>(`solarwork_entries_${currentUserId}`, initialWorkEntries);
   
+  // Aggregated data for admin view
+  const [allWorkEntries, setAllWorkEntries] = useState<WorkEntry[]>([]);
+  const [allInstallations, setAllInstallations] = useState<Installation[]>([]);
+
   const [activeScreen, setActiveScreen] = useState<Screen>('timer');
-  const [hourlyRate, setHourlyRate] = useLocalStorage<number>(`flowtime_rate_${currentUserId}`, 1000);
-  const [currency, setCurrency] = useLocalStorage<string>(`flowtime_currency_${currentUserId}`, 'CZK');
+  const [hourlyWage, setHourlyWage] = useLocalStorage<number>(`solarwork_wage_${currentUserId}`, 15);
+  const [panelRate, setPanelRate] = useLocalStorage<number>(`solarwork_panelrate_${currentUserId}`, 5);
+  const [currency, setCurrency] = useLocalStorage<string>(`solarwork_currency_${currentUserId}`, 'EUR');
   
   // Timer specific state
-  const [activeTimer, setActiveTimer] = useState<{ id: string, startTime: number, projectId: string, duration: number } | null>(null);
+  const [activeTimer, setActiveTimer] = useState<{ id: string, startTime: number, installationId: string, duration: number } | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   
   // Modal states
-  const [isProjectModalOpen, setProjectModalOpen] = useState(false);
-  const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [isInstallationModalOpen, setInstallationModalOpen] = useState(false);
+  const [editingInstallation, setEditingInstallation] = useState<Installation | null>(null);
   const [isTimeEntryModalOpen, setTimeEntryModalOpen] = useState(false);
-  const [editingTimeEntry, setEditingTimeEntry] = useState<TimeEntry | null>(null);
+  const [isPanelLogModalOpen, setPanelLogModalOpen] = useState(false);
+  const [isAddEntryChoiceModalOpen, setAddEntryChoiceModalOpen] = useState(false);
+  const [editingWorkEntry, setEditingWorkEntry] = useState<WorkEntry | null>(null);
+  const [isAdminLoginOpen, setAdminLoginOpen] = useState(false);
+  const [detailViewEntry, setDetailViewEntry] = useState<WorkEntry | null>(null);
   
   // Online status
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -43,8 +56,8 @@ function App() {
   const [adminView, setAdminView] = useState('all');
 
   const currentUser = useMemo(() => users.find(u => u.id === currentUserId), [users, currentUserId]);
-  const activeProject = useMemo(() => projects.find(p => p.id === activeTimer?.projectId), [projects, activeTimer]);
-  const earnings = (elapsedTime / 3600) * hourlyRate;
+  const activeInstallation = useMemo(() => installations.find(p => p.id === activeTimer?.installationId), [installations, activeTimer]);
+  const earnings = (elapsedTime / 3600) * hourlyWage;
 
   // --- Effects ---
   useEffect(() => {
@@ -68,15 +81,47 @@ function App() {
     return () => clearInterval(interval);
   }, [activeTimer, isPaused]);
 
-  // Reset data if user changes
+  // Load correct data based on user (admin or regular)
   useEffect(() => {
-    if (currentUserId) {
-        setProjects(JSON.parse(localStorage.getItem(`flowtime_projects_${currentUserId}`) || '[]'));
-        setTimeEntries(JSON.parse(localStorage.getItem(`flowtime_entries_${currentUserId}`) || '[]'));
-        setHourlyRate(JSON.parse(localStorage.getItem(`flowtime_rate_${currentUserId}`) || '1000'));
-        setCurrency(JSON.parse(localStorage.getItem(`flowtime_currency_${currentUserId}`) || '"CZK"'));
+    if (!currentUserId) return;
+    
+    const loggedInUser = users.find(u => u.id === currentUserId);
+
+    if (loggedInUser?.isAdmin) {
+        // Admin user: aggregate data from all other users
+        const otherUsers = users.filter(u => !u.isAdmin);
+        const aggregatedEntries: WorkEntry[] = [];
+        const aggregatedInstallations: Installation[] = [];
+        
+        otherUsers.forEach(user => {
+            const userEntries = JSON.parse(localStorage.getItem(`solarwork_entries_${user.id}`) || '[]') as WorkEntry[];
+            const userInstallations = JSON.parse(localStorage.getItem(`solarwork_installations_${user.id}`) || '[]') as Installation[];
+            aggregatedEntries.push(...userEntries);
+            aggregatedInstallations.push(...userInstallations);
+        });
+
+        setAllWorkEntries(aggregatedEntries);
+        setAllInstallations(aggregatedInstallations);
+
+        // Load admin's own settings, but clear personal data displays
+        setInstallations([]);
+        setWorkEntries([]);
+        setHourlyWage(JSON.parse(localStorage.getItem(`solarwork_wage_admin`) || '15'));
+        setPanelRate(JSON.parse(localStorage.getItem(`solarwork_panelrate_admin`) || '5'));
+        setCurrency(JSON.parse(localStorage.getItem(`solarwork_currency_admin`) || '"EUR"'));
+    
+    } else {
+        // Regular user: load their own data
+        setInstallations(JSON.parse(localStorage.getItem(`solarwork_installations_${currentUserId}`) || '[]'));
+        setWorkEntries(JSON.parse(localStorage.getItem(`solarwork_entries_${currentUserId}`) || '[]'));
+        setHourlyWage(JSON.parse(localStorage.getItem(`solarwork_wage_${currentUserId}`) || '15'));
+        setPanelRate(JSON.parse(localStorage.getItem(`solarwork_panelrate_${currentUserId}`) || '5'));
+        setCurrency(JSON.parse(localStorage.getItem(`solarwork_currency_${currentUserId}`) || '"EUR"'));
+        // Clear admin data
+        setAllWorkEntries([]);
+        setAllInstallations([]);
     }
-  }, [currentUserId, setProjects, setTimeEntries, setHourlyRate, setCurrency]);
+  }, [currentUserId, users, setInstallations, setWorkEntries, setHourlyWage, setPanelRate, setCurrency]);
 
 
   // --- Handlers ---
@@ -86,41 +131,51 @@ function App() {
 
   const handleCreateUser = (name: string) => {
     const newUser: User = { id: `user_${Date.now()}`, name };
-    // Check for admin
-    if (name.toLowerCase().includes('admin')) {
-      newUser.isAdmin = true;
-    }
     setUsers([...users, newUser]);
     setCurrentUserId(newUser.id);
   };
   
+  const handleAdminLogin = (password: string) => {
+    if (password === ADMIN_PASSWORD) {
+        if (!users.find(u => u.id === ADMIN_USER.id)) {
+            setUsers(prev => [...prev, ADMIN_USER]);
+        }
+        setCurrentUserId(ADMIN_USER.id);
+        setAdminLoginOpen(false);
+    } else {
+        alert(t('wrongPassword'));
+    }
+  };
+
   const handleSwitchUser = () => {
       setCurrentUserId(null);
   };
   
-  const handleSelectProject = useCallback((projectId: string) => {
+  const handleSelectInstallation = useCallback((installationId: string) => {
       if (activeTimer) {
-          // If timer is running, stop it and start a new one with the new project
           handleStopTimer(true); // silent stop
-          handleStartTimer(projectId);
+          handleStartTimer(installationId);
       } else {
-          // If timer is not running, just set it as the one to be used next
-           const newTimer = { id: `temp_${Date.now()}`, startTime: Date.now(), projectId, duration: 0 };
+           const newTimer = { id: `temp_${Date.now()}`, startTime: Date.now(), installationId, duration: 0 };
            setActiveTimer(newTimer);
-           setElapsedTime(0); // Reset elapsed time when project changes while stopped
-           setIsPaused(true); // Stay paused
+           setElapsedTime(0);
+           setIsPaused(true);
       }
       triggerHaptic('light');
   }, [activeTimer, triggerHaptic]);
 
 
-  const handleStartTimer = (selectedProjectId?: string) => {
-    const projectId = selectedProjectId || activeTimer?.projectId;
-    if (!projectId) {
-      alert(t('selectProjectFirst'));
+  const handleStartTimer = (selectedInstallationId?: string) => {
+    const installationId = selectedInstallationId || activeTimer?.installationId;
+    if (!installationId) {
+      alert(t('selectInstallationFirst'));
       return;
     }
-    const newTimer = { id: `entry_${Date.now()}`, startTime: Date.now(), projectId, duration: 0 };
+    if (currentUser?.isAdmin) {
+      alert(t('adminCannotTrackTime'));
+      return;
+    }
+    const newTimer = { id: `entry_${Date.now()}`, startTime: Date.now(), installationId, duration: 0 };
     setActiveTimer(newTimer);
     setElapsedTime(0);
     setIsPaused(false);
@@ -149,13 +204,14 @@ function App() {
 
     const newEntry: TimeEntry = {
       id: activeTimer.id,
-      projectId: activeTimer.projectId,
-      startTime: activeTimer.startTime - (activeTimer.duration * 1000), // Adjust start time based on total duration before this last segment started.
+      type: 'hourly',
+      installationId: activeTimer.installationId,
+      startTime: activeTimer.startTime - (activeTimer.duration * 1000),
       endTime: endTime,
       duration: finalDuration,
       userId: currentUserId!,
     };
-    setTimeEntries(prev => [...prev, newEntry]);
+    setWorkEntries(prev => [...prev, newEntry]);
     setActiveTimer(null);
     setElapsedTime(0);
     setIsPaused(false);
@@ -164,72 +220,108 @@ function App() {
     }
   };
   
-  // Project CRUD
-  const handleSaveProject = (projectData: { name: string, color: string }) => {
-    if (editingProject) {
-      setProjects(projects.map(p => p.id === editingProject.id ? { ...p, ...projectData } : p));
+  // Installation CRUD
+  const handleSaveInstallation = (installationData: { name: string, color: string }) => {
+    if (editingInstallation) {
+      setInstallations(installations.map(p => p.id === editingInstallation.id ? { ...p, ...installationData } : p));
     } else {
-      const newProject: Project = { id: `proj_${Date.now()}`, userId: currentUserId!, ...projectData };
-      setProjects([...projects, newProject]);
+      const newInstallation: Installation = { id: `proj_${Date.now()}`, userId: currentUserId!, ...installationData };
+      setInstallations([...installations, newInstallation]);
     }
-    setProjectModalOpen(false);
-    setEditingProject(null);
+    setInstallationModalOpen(false);
+    setEditingInstallation(null);
   };
   
-  const handleDeleteProject = (projectId: string) => {
-     const entriesForProject = timeEntries.filter(e => e.projectId === projectId);
+  const handleDeleteInstallation = (installationId: string) => {
+     const entriesForInstallation = workEntries.filter(e => e.installationId === installationId);
      let confirmed = false;
-     if (entriesForProject.length > 0) {
-        confirmed = window.confirm(t('deleteProjectWithEntriesConfirm', entriesForProject.length));
+     if (entriesForInstallation.length > 0) {
+        confirmed = window.confirm(t('deleteInstallationWithEntriesConfirm', entriesForInstallation.length));
         if (confirmed) {
-            setTimeEntries(timeEntries.filter(e => e.projectId !== projectId));
+            setWorkEntries(workEntries.filter(e => e.installationId !== installationId));
         }
      } else {
-        confirmed = window.confirm(t('deleteProjectConfirm'));
+        confirmed = window.confirm(t('deleteInstallationConfirm'));
      }
 
      if (confirmed) {
-        setProjects(projects.filter(p => p.id !== projectId));
+        setInstallations(installations.filter(p => p.id !== installationId));
         triggerHaptic('error');
      }
   };
   
-  // Time Entry CRUD
-  const handleSaveTimeEntry = (entryData: { projectId: string, startTime: number, endTime: number }) => {
+  // Work Entry CRUD
+  const handleSaveTimeEntry = (entryData: { installationId: string, startTime: number, endTime: number, notes?: string }) => {
       const duration = (entryData.endTime - entryData.startTime) / 1000;
-      if (editingTimeEntry) {
-          setTimeEntries(entries => entries.map(e => e.id === editingTimeEntry.id ? { ...e, ...entryData, duration } : e));
+      if (editingWorkEntry) {
+          setWorkEntries(entries => entries.map(e => e.id === editingWorkEntry.id ? { ...e, ...entryData, duration, type: 'hourly' } as TimeEntry : e));
       } else {
           const newEntry: TimeEntry = {
               id: `entry_${Date.now()}`,
+              type: 'hourly',
               userId: currentUserId!,
               ...entryData,
               duration,
+              endTime: entryData.endTime,
           };
-          setTimeEntries(entries => [...entries, newEntry]);
+          setWorkEntries(entries => [...entries, newEntry]);
       }
       setTimeEntryModalOpen(false);
-      setEditingTimeEntry(null);
+      setEditingWorkEntry(null);
+  };
+
+  const handleSavePanelEntry = (entryData: { installationId: string, date: number, count: number, notes?: string }) => {
+      if (editingWorkEntry) {
+          setWorkEntries(entries => entries.map(e => e.id === editingWorkEntry.id ? { ...e, ...entryData, type: 'panels' } as PanelEntry : e));
+      } else {
+           const newEntry: PanelEntry = {
+              id: `panel_${Date.now()}`,
+              type: 'panels',
+              userId: currentUserId!,
+              ...entryData,
+          };
+          setWorkEntries(entries => [...entries, newEntry]);
+      }
+      setPanelLogModalOpen(false);
+      setEditingWorkEntry(null);
   };
   
-  const handleDeleteTimeEntry = (entryId: string) => {
+  const handleDeleteWorkEntry = (entryId: string) => {
       if (window.confirm(t('deleteEntryConfirm'))) {
-          setTimeEntries(entries => entries.filter(e => e.id !== entryId));
+          setWorkEntries(entries => entries.filter(e => e.id !== entryId));
+          setDetailViewEntry(null);
           triggerHaptic('error');
       }
   };
 
+    const handleAddEntry = (type: 'time' | 'panel') => {
+        setAddEntryChoiceModalOpen(false);
+        setEditingWorkEntry(null);
+        if (type === 'time') {
+            setTimeEntryModalOpen(true);
+        } else {
+            setPanelLogModalOpen(true);
+        }
+    };
+
+    const handleEditEntry = (entry: WorkEntry) => {
+        setDetailViewEntry(null);
+        setEditingWorkEntry(entry);
+        if (entry.type === 'hourly') {
+            setTimeEntryModalOpen(true);
+        } else {
+            setPanelLogModalOpen(true);
+        }
+    };
+
   // Data Management
   const handleExport = () => {
     try {
-      const data = {
-        projects,
-        timeEntries,
-      };
+      const data = { installations, workEntries };
       const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`;
       const link = document.createElement("a");
       link.href = jsonString;
-      link.download = `flowtime_pro_backup_${currentUser?.name}_${new Date().toISOString().split('T')[0]}.json`;
+      link.download = `solar_work_report_backup_${currentUser?.name}_${new Date().toISOString().split('T')[0]}.json`;
       link.click();
     } catch (e) {
       alert(t('exportError'));
@@ -239,23 +331,18 @@ function App() {
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     if (!window.confirm(t('importConfirm'))) return;
-
     const reader = new FileReader();
     reader.onload = (e) => {
       try {
         const text = e.target?.result;
         if (typeof text !== 'string') throw new Error("File not read as text");
         const data = JSON.parse(text);
-        
-        // Basic validation
-        if (Array.isArray(data.projects) && Array.isArray(data.timeEntries)) {
-          // Add user ID to imported data
-          const importedProjects = data.projects.map((p: any) => ({...p, userId: currentUserId}));
-          const importedEntries = data.timeEntries.map((e: any) => ({...e, userId: currentUserId}));
-          setProjects(prev => [...prev, ...importedProjects]);
-          setTimeEntries(prev => [...prev, ...importedEntries]);
+        if (Array.isArray(data.installations) && Array.isArray(data.workEntries)) {
+          const importedInstallations = data.installations.map((p: any) => ({...p, userId: currentUserId}));
+          const importedEntries = data.workEntries.map((e: any) => ({...e, userId: currentUserId}));
+          setInstallations(prev => [...prev, ...importedInstallations]);
+          setWorkEntries(prev => [...prev, ...importedEntries]);
           alert(t('importSuccess'));
         } else {
           throw new Error("Invalid file structure");
@@ -265,26 +352,50 @@ function App() {
       }
     };
     reader.readAsText(file);
-    // Reset file input
     event.target.value = '';
   };
 
   const handleReset = () => {
     if (currentUser && window.confirm(t('resetConfirm', currentUser.name))) {
-      setProjects([]);
-      setTimeEntries([]);
+      setInstallations([]);
+      setWorkEntries([]);
       alert(t('resetSuccess', currentUser.name));
     }
   };
+
+  // --- Memos for display data ---
+  const displayedEntries = useMemo(() => {
+    if (currentUser?.isAdmin) {
+      if (adminView === 'all') {
+        return allWorkEntries;
+      }
+      return allWorkEntries.filter(e => e.userId === adminView);
+    }
+    return workEntries;
+  }, [currentUser, adminView, workEntries, allWorkEntries]);
+
+  const displayedInstallations = useMemo(() => {
+    if (currentUser?.isAdmin) {
+      if (adminView === 'all') {
+        return allInstallations;
+      }
+       const userInstallations = allInstallations.filter(p => p.userId === adminView);
+       const installationIds = new Set(userInstallations.map(p => p.id));
+       const relevantEntries = allWorkEntries.filter(e => e.userId === adminView && installationIds.has(e.installationId));
+       return userInstallations;
+    }
+    return installations;
+  }, [currentUser, adminView, installations, allInstallations, allWorkEntries]);
+
 
   // --- Render Logic ---
   const renderScreen = () => {
     switch(activeScreen) {
       case 'stats':
         return <StatsDashboard 
-                    entries={timeEntries} 
-                    projects={projects} 
-                    hourlyRate={hourlyRate}
+                    entries={displayedEntries} 
+                    hourlyWage={hourlyWage}
+                    panelRate={panelRate}
                     currency={currency}
                     userName={currentUser?.name}
                     t={t}
@@ -294,21 +405,24 @@ function App() {
                     adminView={adminView}
                     setAdminView={setAdminView}
                 />;
-      case 'projects':
-        return <ProjectList 
-                    projects={projects} 
-                    onSelectProject={handleSelectProject} 
-                    activeProjectId={activeTimer?.projectId}
-                    onCreateProject={() => { setEditingProject(null); setProjectModalOpen(true); }}
-                    onEditProject={(p) => { setEditingProject(p); setProjectModalOpen(true); }}
-                    onDeleteProject={handleDeleteProject}
+      case 'installations':
+        return <InstallationList 
+                    installations={displayedInstallations} 
+                    onSelectInstallation={handleSelectInstallation} 
+                    activeInstallationId={activeTimer?.installationId}
+                    onCreateInstallation={() => { setEditingInstallation(null); setInstallationModalOpen(true); }}
+                    onEditInstallation={(p) => { setEditingInstallation(p); setInstallationModalOpen(true); }}
+                    onDeleteInstallation={handleDeleteInstallation}
                     onHapticTrigger={triggerHaptic}
                     t={t}
+                    isReadOnly={currentUser?.isAdmin}
                 />;
       case 'settings':
         return <SettingsScreen 
-                    hourlyRate={hourlyRate}
-                    setHourlyRate={setHourlyRate}
+                    hourlyWage={hourlyWage}
+                    setHourlyWage={setHourlyWage}
+                    panelRate={panelRate}
+                    setPanelRate={setPanelRate}
                     currency={currency}
                     setCurrency={setCurrency}
                     onExport={handleExport}
@@ -321,15 +435,15 @@ function App() {
                     setLanguage={setLanguage}
                 />;
       case 'history':
-        return <TimeEntryListScreen 
-                    entries={timeEntries} 
-                    projects={projects} 
-                    onAdd={() => { setEditingTimeEntry(null); setTimeEntryModalOpen(true); }}
-                    onEdit={(e) => { setEditingTimeEntry(e); setTimeEntryModalOpen(true); }}
-                    onDelete={handleDeleteTimeEntry}
+        return <WorkLogScreen 
+                    entries={displayedEntries} 
+                    installations={displayedInstallations} 
+                    onAdd={() => setAddEntryChoiceModalOpen(true)}
+                    onViewDetails={setDetailViewEntry}
                     onHapticTrigger={triggerHaptic}
                     t={t}
                     language={language}
+                    isReadOnly={currentUser?.isAdmin}
                 />
       case 'timer':
       default:
@@ -338,7 +452,7 @@ function App() {
                 <TimerDisplay 
                     elapsedTime={elapsedTime} 
                     earnings={earnings} 
-                    activeProject={activeProject}
+                    activeInstallation={activeInstallation}
                     currency={currency}
                     isActive={!!activeTimer && !isPaused}
                     t={t}
@@ -351,7 +465,7 @@ function App() {
                          </FloatingButton>
                     )}
                      {(isPaused || !activeTimer) && (
-                         <FloatingButton onClick={activeTimer ? handleResumeTimer : handleStartTimer} ariaLabel={activeTimer ? t('resumeTimer') : t('startTimer')} className="w-20 h-20" disabled={!activeTimer?.projectId}>
+                         <FloatingButton onClick={activeTimer ? handleResumeTimer : handleStartTimer} ariaLabel={activeTimer ? t('resumeTimer') : t('startTimer')} className="w-20 h-20" disabled={!activeTimer?.installationId}>
                             <PlayIcon />
                          </FloatingButton>
                     )}
@@ -365,29 +479,69 @@ function App() {
   };
 
   if (!currentUser) {
-    return <UserSelectionScreen users={users} onSelectUser={handleSelectUser} onCreateUser={handleCreateUser} t={t} />;
+    return (
+        <>
+            <UserSelectionScreen 
+                users={users} 
+                onSelectUser={handleSelectUser} 
+                onCreateUser={handleCreateUser}
+                onAdminLoginRequest={() => setAdminLoginOpen(true)}
+                t={t} 
+            />
+            {isAdminLoginOpen && <AdminLoginModal 
+                onClose={() => setAdminLoginOpen(false)}
+                onLogin={handleAdminLogin}
+                t={t}
+            />}
+        </>
+    );
   }
 
   return (
-    <div className="h-[100dvh] w-full text-white bg-gradient-to-b from-[#000010] to-[#0A0A15] overflow-hidden flex flex-col">
+    <div className="h-[100dvh] w-full text-white bg-gradient-to-b from-[var(--primary)] to-[var(--secondary)] overflow-hidden flex flex-col">
         {!isOnline && <OfflineIndicator t={t} />}
         <main className="flex-grow overflow-y-auto pb-28">
             {renderScreen()}
         </main>
         
-        {isProjectModalOpen && <ProjectModal 
-            project={editingProject} 
-            onClose={() => setProjectModalOpen(false)} 
-            onSave={handleSaveProject} 
+        {isInstallationModalOpen && <InstallationModal 
+            installation={editingInstallation} 
+            onClose={() => setInstallationModalOpen(false)} 
+            onSave={handleSaveInstallation} 
+            t={t}
+        />}
+
+        {isAddEntryChoiceModalOpen && <AddEntryChoiceModal
+            onClose={() => setAddEntryChoiceModalOpen(false)}
+            onSelect={handleAddEntry}
             t={t}
         />}
 
         {isTimeEntryModalOpen && <TimeEntryModal 
-            entry={editingTimeEntry}
-            projects={projects}
-            onClose={() => setTimeEntryModalOpen(false)}
+            entry={editingWorkEntry?.type === 'hourly' ? editingWorkEntry : null}
+            installations={installations}
+            onClose={() => { setTimeEntryModalOpen(false); setEditingWorkEntry(null); }}
             onSave={handleSaveTimeEntry}
             t={t}
+        />}
+
+        {isPanelLogModalOpen && <PanelLogModal 
+            entry={editingWorkEntry?.type === 'panels' ? editingWorkEntry : null}
+            installations={installations}
+            onClose={() => { setPanelLogModalOpen(false); setEditingWorkEntry(null); }}
+            onSave={handleSavePanelEntry}
+            t={t}
+        />}
+
+        {detailViewEntry && <WorkEntryDetailModal 
+            entry={detailViewEntry}
+            installation={displayedInstallations.find(p => p.id === detailViewEntry.installationId)}
+            onClose={() => setDetailViewEntry(null)}
+            onEdit={handleEditEntry}
+            onDelete={handleDeleteWorkEntry}
+            t={t}
+            language={language}
+            isReadOnly={currentUser?.isAdmin}
         />}
         
       <BottomNav activeScreen={activeScreen} setActiveScreen={setActiveScreen} onHapticTrigger={() => triggerHaptic('light')} t={t}/>

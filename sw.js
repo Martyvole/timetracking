@@ -6,10 +6,10 @@ const URLS_TO_CACHE = [
   '/manifest.json',
   '/index.tsx',
   'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Roboto+Mono:wght@100..700&display=swap',
-  'https://unpkg.com/react@18/umd/react.production.min.js',
-  'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js',
-  'https://unpkg.com/recharts@2.12.7/umd/Recharts.min.js',
+  'https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&family=Roboto+Mono:wght@100..700&display.swap',
+  'https://aistudiocdn.com/react@^19.1.1',
+  'https://aistudiocdn.com/recharts@^3.2.0',
+  'https://aistudiocdn.com/@google/genai@^0.14.2'
 ];
 
 self.addEventListener('install', event => {

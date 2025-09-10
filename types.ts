@@ -5,23 +5,40 @@ export interface User {
   isAdmin?: boolean;
 }
 
-export interface Project {
-  id: string;
+export interface Installation {
+  id:string;
   name: string;
   color: string;
   userId: string;
 }
 
-export interface TimeEntry {
+// Base interface for all work entries
+interface BaseEntry {
   id: string;
-  projectId: string;
+  installationId: string;
+  userId: string;
+  notes?: string;
+  photo?: string; // base64 encoded string
+}
+
+// Entry for timed (hourly) work
+export interface TimeEntry extends BaseEntry {
+  type: 'hourly';
   startTime: number;
   endTime: number | null;
   duration: number; // in seconds
-  userId: string;
 }
 
-export type Screen = 'timer' | 'stats' | 'projects' | 'settings' | 'history';
+// Entry for piece-rate (panel) work
+export interface PanelEntry extends BaseEntry {
+    type: 'panels';
+    date: number; // Timestamp for the day work was done
+    count: number; // Number of panels installed
+}
+
+export type WorkEntry = TimeEntry | PanelEntry;
+
+export type Screen = 'timer' | 'stats' | 'installations' | 'settings' | 'history';
 
 export interface HapticFeedbackType {
   light: number[];

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import type { Project, TimeEntry, Screen, User } from './types';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import type { Installation, WorkEntry, TimeEntry, PanelEntry, Screen, User } from './types';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Rectangle } from 'recharts';
 
 // --- Icon Components ---
 
@@ -12,18 +12,19 @@ const Icon: React.FC<{ children: React.ReactNode; className?: string }> = ({ chi
 
 export const AppIcon: React.FC<{ className?: string }> = ({ className }) => (
     <div className={`relative w-24 h-24 ${className}`}>
-        <div className="absolute inset-0 bg-gradient-to-br from-[#00F5FF] via-[#9D4EDD] to-[#FF0080] rounded-[28px] blur-lg opacity-50"></div>
-        <div className="relative w-full h-full bg-[rgba(20,20,35,0.8)] backdrop-blur-md rounded-[24px] border border-white/10 flex items-center justify-center">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#FFC300] to-[#FF5733] rounded-[28px] blur-lg opacity-50"></div>
+        <div className="relative w-full h-full bg-[rgba(27, 38, 59, 0.8)] backdrop-blur-md rounded-[24px] border border-white/10 flex items-center justify-center">
+             <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                     <linearGradient id="iconGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="#00F5FF"/>
-                        <stop offset="50%" stopColor="#9D4EDD"/>
-                        <stop offset="100%" stopColor="#FF0080"/>
+                        <stop offset="0%" stopColor="#FFC300"/>
+                        <stop offset="100%" stopColor="#FF5733"/>
                     </linearGradient>
                 </defs>
-                <path d="M12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2ZM12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20Z" fill="url(#iconGrad)" fillOpacity="0.5"/>
-                <path d="M12 6V12L16 14" stroke="url(#iconGrad)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <circle cx="50" cy="50" r="25" fill="url(#iconGrad)"/>
+                <path d="M50 15 V5 M50 95 V85 M15 50 H5 M95 50 H85 M29.289 29.289 L22.218 22.218 M77.782 77.782 L70.711 70.711 M29.289 70.711 L22.218 77.782 M77.782 22.218 L70.711 29.289" stroke="url(#iconGrad)" strokeWidth="4" strokeLinecap="round"/>
+                <rect x="35" y="42" width="30" height="16" fill="rgba(13, 27, 42, 0.7)" stroke="#415a77" strokeWidth="2" rx="2"/>
+                <path d="M35 46 H 65 M35 52 H 65 M42.5 42 V 58 M50 42 V 58 M57.5 42 V 58" stroke="#415a77" strokeWidth="1"/>
             </svg>
         </div>
     </div>
@@ -31,7 +32,7 @@ export const AppIcon: React.FC<{ className?: string }> = ({ className }) => (
 
 export const TimerIcon: React.FC = () => <Icon><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm-1 4v5h5v-2h-3V8H11Z" /></Icon>;
 export const StatsIcon: React.FC = () => <Icon><path d="M3 12h2v9H3v-9Zm5-4h2v13H8V8Zm5-5h2v18h-2V3Zm5 9h2v9h-2v-9Z" /></Icon>;
-export const ProjectsIcon: React.FC = () => <Icon><path d="M3 4c0-.552.448-1 1-1h16c.552 0 1 .448 1 1v16c0 .552-.448 1-1 1H4c-.552 0-1-.448-1-1V4Zm2 1v14h14V5H5Zm2 2h4v4H7V7Zm6 0h4v4h-4V7Zm-6 6h4v4H7v-4Zm6 0h4v4h-4v-4Z"/></Icon>;
+export const InstallationsIcon: React.FC = () => <Icon><path d="M3 4c0-.552.448-1 1-1h16c.552 0 1 .448 1 1v16c0 .552-.448 1-1 1H4c-.552 0-1-.448-1-1V4Zm2 1v14h14V5H5Zm2 2h4v4H7V7Zm6 0h4v4h-4V7Zm-6 6h4v4H7v-4Zm6 0h4v4h-4v-4Z"/></Icon>;
 export const SettingsIcon: React.FC = () => <Icon><path d="M12 1a9 9 0 0 0-6.12 15.65.75.75 0 0 1-.22 1.05l-1.59 1.59a.75.75 0 0 0 1.06 1.06l1.59-1.59a.75.75 0 0 1 1.05-.22A9 9 0 1 0 12 1Zm0 4a4 4 0 1 1 0 8 4 4 0 0 1 0-8Z" clipRule="evenodd" fillRule="evenodd"/></Icon>;
 export const HistoryIcon: React.FC = () => <Icon><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8a8 8 0 0 1-8 8Zm1-12h-2v5h5v-2h-3V8Z" clipRule="evenodd" fillRule="evenodd" /></Icon>;
 export const PlayIcon: React.FC = () => <Icon><path d="M8 5.14v14l11-7-11-7Z" /></Icon>;
@@ -41,6 +42,9 @@ export const PlusIcon: React.FC = () => <Icon><path d="M11 11V5h2v6h6v2h-6v6h-2v
 export const KebabMenuIcon: React.FC = () => <Icon><path d="M12 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/></Icon>;
 export const EditIcon: React.FC = () => <Icon><path d="m16.262 3.126 4.612 4.612-11.88 11.88-5.717 1.117 1.117-5.717L16.262 3.126ZM18.429 1.943l-2.167 2.167-4.612-4.612 2.167-2.167a1 1 0 0 1 1.414 0l3.198 3.198a1 1 0 0 1 0 1.414Z"/></Icon>;
 export const TrashIcon: React.FC = () => <Icon><path d="M4 6h16v2H4V6Zm2 14v-9h12v9H6Zm2-7h2v5H8v-5Zm4 0h2v5h-2v-5Zm-6-5h10V4H8v2Z"/></Icon>;
+export const PanelIcon: React.FC = () => <Icon><path d="M2 2h20v20H2V2zm2 2v3h16V4H4zm0 5v4h7V9H4zm9 0v4h7V9h-7zm-9 6v4h7v-4H4zm9 0v4h7v-4h-7z"/></Icon>;
+// FIX: Added className prop to NoteIcon to allow custom styling.
+export const NoteIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className}><path d="M4 2.5A1.5 1.5 0 0 0 2.5 4v16A1.5 1.5 0 0 0 4 21.5h16a1.5 1.5 0 0 0 1.5-1.5V4A1.5 1.5 0 0 0 20 2.5H4ZM4 4h16v16H4V4Zm3 3.5h10v2H7v-2Zm0 4h10v2H7v-2Zm0 4h6v2H7v-2Z"/></Icon>;
 
 
 // --- UI Components ---
@@ -58,8 +62,8 @@ export const FloatingButton: React.FC<{ onClick: () => void; children: React.Rea
         disabled={disabled}
         className={`relative group flex items-center justify-center transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95 ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
-        <div className={`absolute inset-0 bg-gradient-to-br from-[#00F5FF] via-[#9D4EDD] to-[#FF0080] rounded-full blur-xl group-hover:blur-2xl transition-all duration-300 opacity-60 group-hover:opacity-80 ${disabled ? 'opacity-30' : ''}`}></div>
-        <div className={`relative w-full h-full bg-gradient-to-br from-[rgba(0,245,255,0.8)] via-[rgba(157,78,221,0.8)] to-[rgba(255,0,128,0.8)] text-white rounded-full flex items-center justify-center shadow-lg ${disabled ? 'from-[rgba(128,128,128,0.5)] to-[rgba(80,80,80,0.5)]' : ''}`}>
+        <div className={`absolute inset-0 bg-gradient-to-br from-[var(--accent-1)] via-[var(--accent-2)] to-[var(--accent-3)] rounded-full blur-xl group-hover:blur-2xl transition-all duration-300 opacity-60 group-hover:opacity-80 ${disabled ? 'opacity-30' : ''}`}></div>
+        <div className={`relative w-full h-full bg-gradient-to-br from-[rgba(255,195,0,0.8)] via-[rgba(255,87,51,0.8)] to-[rgba(65,90,119,0.8)] text-white rounded-full flex items-center justify-center shadow-lg ${disabled ? 'from-[rgba(128,128,128,0.5)] to-[rgba(80,80,80,0.5)]' : ''}`}>
             {children}
         </div>
     </button>
@@ -73,11 +77,11 @@ interface BottomNavProps {
 }
 
 export const BottomNav: React.FC<BottomNavProps> = ({ activeScreen, setActiveScreen, onHapticTrigger, t }) => {
-    const navItems: { screen: Screen, icon: React.ReactNode, labelKey: 'timer' | 'history' | 'stats' | 'projects' | 'settings' }[] = [
+    const navItems: { screen: Screen, icon: React.ReactNode, labelKey: 'timer' | 'history' | 'stats' | 'installations' | 'settings' }[] = [
         { screen: 'timer', icon: <TimerIcon />, labelKey: 'timer' },
         { screen: 'history', icon: <HistoryIcon />, labelKey: 'history' },
         { screen: 'stats', icon: <StatsIcon />, labelKey: 'stats' },
-        { screen: 'projects', icon: <ProjectsIcon />, labelKey: 'projects' },
+        { screen: 'installations', icon: <InstallationsIcon />, labelKey: 'installations' },
         { screen: 'settings', icon: <SettingsIcon />, labelKey: 'settings' },
     ];
 
@@ -94,7 +98,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeScreen, setActiveScr
                         key={item.screen}
                         onClick={() => handleNavClick(item.screen)}
                         className={`relative flex flex-col items-center justify-center w-1/5 h-full text-xs transition-colors duration-300 rounded-2xl ${
-                            activeScreen === item.screen ? 'text-[#00F5FF]' : 'text-gray-400 hover:text-white'
+                            activeScreen === item.screen ? 'text-[var(--accent-1)]' : 'text-gray-400 hover:text-white'
                         }`}
                     >
                         {activeScreen === item.screen && (
@@ -125,13 +129,13 @@ export const OfflineIndicator: React.FC<{ t: (key: string) => string }> = ({ t }
 interface TimerDisplayProps {
     elapsedTime: number;
     earnings: number;
-    activeProject?: Project;
+    activeInstallation?: Installation;
     currency: string;
     isActive: boolean;
     t: (key: string) => string;
     language: 'en' | 'cs';
 }
-export const TimerDisplay: React.FC<TimerDisplayProps> = ({ elapsedTime, earnings, activeProject, currency, isActive, t, language }) => {
+export const TimerDisplay: React.FC<TimerDisplayProps> = ({ elapsedTime, earnings, activeInstallation, currency, isActive, t, language }) => {
     const formatTime = (seconds: number) => {
         const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
         const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
@@ -157,7 +161,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({ elapsedTime, earning
                 <defs>
                     <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
                          <stop offset="0%" stopColor="var(--accent-1)" />
-                         <stop offset="100%" stopColor="var(--accent-3)" />
+                         <stop offset="100%" stopColor="var(--accent-2)" />
                     </linearGradient>
                      <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
                         <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
@@ -167,11 +171,8 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({ elapsedTime, earning
                         </feMerge>
                     </filter>
                 </defs>
-                {/* Dial background and inner shadow for 3D depth */}
-                <circle cx="150" cy="150" r={radius} stroke="rgba(255,255,255,0.05)" strokeWidth="1" fill="rgba(10, 10, 21, 0.5)" />
+                <circle cx="150" cy="150" r={radius} stroke="rgba(255,255,255,0.05)" strokeWidth="1" fill="rgba(13, 27, 42, 0.5)" />
                 <circle cx="150" cy="150" r={radius - 1} fill="transparent" stroke="rgba(0,0,0,0.5)" strokeWidth="15" />
-
-                {/* The glowing progress bar */}
                 <g filter="url(#neonGlow)">
                     <circle
                         cx="150"
@@ -194,19 +195,19 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({ elapsedTime, earning
                 >
                     {formatTime(elapsedTime)}
                 </p>
-                <p className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#00F5FF] to-[#9D4EDD]">
+                <p className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)]">
                     {formatCurrency(earnings)}
                 </p>
-                 <p className="mt-2 text-gray-400 text-sm truncate max-w-[200px]">{activeProject ? activeProject.name : t('noProjectSelected')}</p>
+                 <p className="mt-2 text-gray-400 text-sm truncate max-w-[200px]">{activeInstallation ? activeInstallation.name : t('noInstallationSelected')}</p>
             </div>
         </div>
     );
 };
 
 interface StatsDashboardProps {
-    entries: TimeEntry[];
-    projects: Project[];
-    hourlyRate: number;
+    entries: WorkEntry[];
+    hourlyWage: number;
+    panelRate: number;
     currency: string;
     userName?: string;
     t: (key: string, ...args: any[]) => string;
@@ -217,29 +218,42 @@ interface StatsDashboardProps {
     setAdminView: (view: string) => void;
 }
 
-export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, projects, hourlyRate, currency, userName, t, language, isAdmin, allUsers, adminView, setAdminView }) => {
-    const dataByDay: { [key: string]: { name: string, hours: number } } = {};
-    const today = new Date();
+export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, hourlyWage, panelRate, currency, userName, t, language, isAdmin, allUsers, adminView, setAdminView }) => {
+    const { totalHours, totalPanels, totalEarnings, chartData } = useMemo(() => {
+        const timeEntries = entries.filter(e => e.type === 'hourly') as TimeEntry[];
+        const panelEntries = entries.filter(e => e.type === 'panels') as PanelEntry[];
 
-    for(let i=6; i>=0; i--){
-        const d = new Date(today);
-        d.setDate(today.getDate() - i);
-        const dayKey = d.toLocaleDateString('en-CA'); // YYYY-MM-DD
-        const dayName = d.toLocaleDateString(language === 'cs' ? 'cs-CZ' : 'en-US', { weekday: 'short' });
-        dataByDay[dayKey] = { name: dayName, hours: 0 };
-    }
+        const totalHours = timeEntries.reduce((acc, e) => acc + e.duration, 0) / 3600;
+        const totalPanels = panelEntries.reduce((acc, e) => acc + e.count, 0);
 
-    entries.forEach(entry => {
-        const entryDate = new Date(entry.startTime).toLocaleDateString('en-CA');
-        if(dataByDay[entryDate]) {
-            dataByDay[entryDate].hours += entry.duration / 3600;
+        // NOTE: In a more complex app, this calculation should happen in the parent
+        // especially for admin 'all' view with different user rates.
+        // For now, it uses the passed-in rates (which will be the admin's rate for 'all').
+        const hourlyEarnings = totalHours * hourlyWage;
+        const panelEarnings = totalPanels * panelRate;
+        const totalEarnings = hourlyEarnings + panelEarnings;
+        
+        const dataByDay: { [key: string]: { name: string, hours: number } } = {};
+        const today = new Date();
+
+        for(let i=6; i>=0; i--){
+            const d = new Date(today);
+            d.setDate(today.getDate() - i);
+            const dayKey = d.toLocaleDateString('en-CA'); // YYYY-MM-DD
+            const dayName = d.toLocaleDateString(language === 'cs' ? 'cs-CZ' : 'en-US', { weekday: 'short' });
+            dataByDay[dayKey] = { name: dayName, hours: 0 };
         }
-    });
 
-    const chartData = Object.values(dataByDay);
+        timeEntries.forEach(entry => {
+            const entryDate = new Date(entry.startTime).toLocaleDateString('en-CA');
+            if(dataByDay[entryDate]) {
+                dataByDay[entryDate].hours += entry.duration / 3600;
+            }
+        });
+        const chartData = Object.values(dataByDay);
 
-    const totalHours = entries.reduce((acc, e) => acc + e.duration, 0) / 3600;
-    const totalEarnings = totalHours * hourlyRate;
+        return { totalHours, totalPanels, totalEarnings, chartData };
+    }, [entries, hourlyWage, panelRate, language]);
 
     const formatCurrency = (amount: number) => {
          return new Intl.NumberFormat(language === 'cs' ? 'cs-CZ' : 'en-US', {
@@ -248,6 +262,8 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, project
             maximumFractionDigits: 0,
         }).format(amount);
     }
+
+    const nonAdminUsers = useMemo(() => allUsers.filter(u => !u.isAdmin), [allUsers]);
 
     return (
         <div className="p-4 space-y-6 text-white">
@@ -259,13 +275,18 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, project
                      <select 
                         value={adminView}
                         onChange={(e) => setAdminView(e.target.value)}
-                        className="w-full p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF] appearance-none text-center font-bold"
+                        className="w-full p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)] appearance-none text-center font-bold"
                      >
                         <option value="all">{t('allUsers')}</option>
-                        {allUsers.map(user => <option key={user.id} value={user.id}>{user.name}</option>)}
+                        {nonAdminUsers.map(user => <option key={user.id} value={user.id}>{user.name}</option>)}
                      </select>
                  </GlassCard>
             )}
+
+             <GlassCard className="p-4 text-center">
+                <p className="text-gray-400 text-sm">{t('totalEarnings')}</p>
+                <p className="text-4xl font-bold font-timer text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)]">{formatCurrency(totalEarnings)}</p>
+            </GlassCard>
 
             <div className="grid grid-cols-2 gap-4 text-center">
                 <GlassCard className="p-4">
@@ -273,8 +294,8 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, project
                     <p className="text-3xl font-bold font-timer">{totalHours.toFixed(1)}</p>
                 </GlassCard>
                 <GlassCard className="p-4">
-                     <p className="text-gray-400 text-sm">{t('totalEarnings')}</p>
-                    <p className="text-3xl font-bold font-timer">{formatCurrency(totalEarnings)}</p>
+                     <p className="text-gray-400 text-sm">{t('totalPanels')}</p>
+                    <p className="text-3xl font-bold font-timer">{totalPanels}</p>
                 </GlassCard>
             </div>
             
@@ -285,23 +306,16 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, project
                         <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                         <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
                         <Tooltip
-                            contentStyle={{
-                                background: 'rgba(20, 20, 35, 0.8)',
-                                border: '1px solid rgba(255,255,255,0.1)',
-                                borderRadius: '16px',
-                                color: 'white'
-                            }}
-                            cursor={{ fill: 'rgba(255,255,255,0.05)', radius: 8 }}
+                            contentStyle={{ background: 'var(--glass)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', color: 'white' }}
+                            cursor={<Rectangle fill="rgba(255,255,255,0.05)" />}
                         />
                         <Bar dataKey="hours" radius={[8, 8, 0, 0]}>
-                            {chartData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill="url(#colorUv)" />
-                            ))}
+                            {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill="url(#colorUv)" />)}
                         </Bar>
                          <defs>
                             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#00F5FF" stopOpacity={0.8}/>
-                                <stop offset="95%" stopColor="#9D4EDD" stopOpacity={0.8}/>
+                                <stop offset="5%" stopColor="var(--accent-1)" stopOpacity={0.8}/>
+                                <stop offset="95%" stopColor="var(--accent-2)" stopOpacity={0.8}/>
                             </linearGradient>
                         </defs>
                     </BarChart>
@@ -311,54 +325,57 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, project
     );
 };
 
-const PROJECT_COLORS = ['#00F5FF', '#FF0080', '#9D4EDD', '#38E4AE', '#FFC700', '#FF6B00'];
+const INSTALLATION_COLORS = ['#FFC300', '#FF5733', '#415a77', '#38E4AE', '#9D4EDD', '#00F5FF'];
 
-interface ProjectListProps {
-    projects: Project[];
-    onSelectProject: (projectId: string) => void;
-    activeProjectId?: string;
-    onCreateProject: () => void;
-    onEditProject: (project: Project) => void;
-    onDeleteProject: (projectId: string) => void;
+interface InstallationListProps {
+    installations: Installation[];
+    onSelectInstallation: (installationId: string) => void;
+    activeInstallationId?: string;
+    onCreateInstallation: () => void;
+    onEditInstallation: (installation: Installation) => void;
+    onDeleteInstallation: (installationId: string) => void;
     onHapticTrigger: (type: 'light' | 'medium' | 'error') => void;
     t: (key: string) => string;
+    isReadOnly?: boolean;
 }
 
-export const ProjectList: React.FC<ProjectListProps> = ({ projects, onSelectProject, activeProjectId, onCreateProject, onEditProject, onDeleteProject, onHapticTrigger, t }) => {
+export const InstallationList: React.FC<InstallationListProps> = ({ installations, onSelectInstallation, activeInstallationId, onCreateInstallation, onEditInstallation, onDeleteInstallation, onHapticTrigger, t, isReadOnly = false }) => {
     const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null);
 
-    const toggleMenu = (projectId: string) => {
+    const toggleMenu = (installationId: string) => {
         onHapticTrigger('light');
-        setMenuOpenFor(prev => (prev === projectId ? null : projectId));
+        setMenuOpenFor(prev => (prev === installationId ? null : installationId));
     };
     
     return (
         <div className="p-4 space-y-4 text-white relative h-full flex flex-col">
-            <h2 className="font-display text-4xl font-extrabold text-center">{t('projectsTitle')}</h2>
+            <h2 className="font-display text-4xl font-extrabold text-center">{t('installationsTitle')}</h2>
             <div className="space-y-3 flex-grow overflow-y-auto pr-2">
-                {projects.length === 0 ? (
+                {installations.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
-                        <p className="text-lg">{t('noProjects')}</p>
-                        <p className="text-sm">{t('noProjectsDesc')}</p>
+                        <p className="text-lg">{t('noInstallations')}</p>
+                        <p className="text-sm">{t('noInstallationsDesc')}</p>
                     </div>
-                ) : projects.map(p => (
+                ) : installations.map(p => (
                     <div key={p.id} className="relative">
-                        <GlassCard className={`w-full transition-all duration-300 flex items-center justify-between ${activeProjectId === p.id ? 'border-[#00F5FF] shadow-[0_0_20px_var(--glow)]' : ''}`}>
-                            <button onClick={() => onSelectProject(p.id)} className="flex-grow flex items-center gap-4 p-4 text-left">
+                        <GlassCard className={`w-full transition-all duration-300 flex items-center justify-between ${activeInstallationId === p.id ? 'border-[var(--accent-1)] shadow-[0_0_20px_var(--glow)]' : ''}`}>
+                            <button onClick={() => onSelectInstallation(p.id)} className="flex-grow flex items-center gap-4 p-4 text-left">
                                 <div className="w-4 h-4 rounded-full" style={{backgroundColor: p.color}}></div>
                                 <span className="font-bold">{p.name}</span>
-                                {activeProjectId === p.id && <div className="w-2 h-2 rounded-full bg-[#00F5FF] ml-auto"></div>}
+                                {activeInstallationId === p.id && <div className="w-2 h-2 rounded-full bg-[var(--accent-1)] ml-auto"></div>}
                             </button>
-                             <button onClick={() => toggleMenu(p.id)} className="p-4 text-gray-400 hover:text-white">
-                                <KebabMenuIcon />
-                            </button>
+                            {!isReadOnly && (
+                                <button onClick={() => toggleMenu(p.id)} className="p-4 text-gray-400 hover:text-white">
+                                    <KebabMenuIcon />
+                                </button>
+                            )}
                         </GlassCard>
                         {menuOpenFor === p.id && (
                              <GlassCard className="absolute right-0 top-full mt-2 w-40 z-10 p-2">
-                                 <button onClick={() => { onEditProject(p); setMenuOpenFor(null); }} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-white/5">
+                                 <button onClick={() => { onEditInstallation(p); setMenuOpenFor(null); }} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-white/5">
                                     <EditIcon /> {t('edit')}
                                  </button>
-                                 <button onClick={() => { onDeleteProject(p.id); setMenuOpenFor(null); }} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-red-500">
+                                 <button onClick={() => { onDeleteInstallation(p.id); setMenuOpenFor(null); }} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-red-500">
                                      <TrashIcon /> {t('delete')}
                                  </button>
                              </GlassCard>
@@ -366,24 +383,26 @@ export const ProjectList: React.FC<ProjectListProps> = ({ projects, onSelectProj
                     </div>
                 ))}
             </div>
-             <FloatingButton onClick={onCreateProject} ariaLabel={t('addProject')} className="absolute bottom-4 right-4 w-16 h-16">
-                <PlusIcon />
-             </FloatingButton>
+            {!isReadOnly && (
+                <FloatingButton onClick={onCreateInstallation} ariaLabel={t('addInstallation')} className="absolute bottom-4 right-4 w-16 h-16">
+                    <PlusIcon />
+                </FloatingButton>
+            )}
         </div>
     );
 };
 
-interface ProjectModalProps {
-    project?: Project | null;
+interface InstallationModalProps {
+    installation?: Installation | null;
     onClose: () => void;
-    onSave: (projectData: { name: string, color: string }) => void;
+    onSave: (installationData: { name: string, color: string }) => void;
     t: (key: string) => string;
 }
 
-export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, onSave, t }) => {
-    const isEditing = !!project;
-    const [name, setName] = useState(project?.name || '');
-    const [color, setColor] = useState(project?.color || PROJECT_COLORS[0]);
+export const InstallationModal: React.FC<InstallationModalProps> = ({ installation, onClose, onSave, t }) => {
+    const isEditing = !!installation;
+    const [name, setName] = useState(installation?.name || '');
+    const [color, setColor] = useState(installation?.color || INSTALLATION_COLORS[0]);
 
     const handleSave = () => {
         if (name.trim()) {
@@ -394,22 +413,22 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
             <GlassCard className="w-full max-w-sm p-6 space-y-6">
-                <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editProject') : t('newProject')}</h2>
+                <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editInstallation') : t('newInstallation')}</h2>
                 <div>
-                    <label htmlFor="projectName" className="text-sm text-gray-400">{t('projectName')}</label>
+                    <label htmlFor="installationName" className="text-sm text-gray-400">{t('installationName')}</label>
                     <input
-                        id="projectName"
+                        id="installationName"
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF]"
+                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
                     />
                 </div>
                 <div>
                     <label className="text-sm text-gray-400">{t('color')}</label>
                     <div className="flex justify-between mt-2">
-                        {PROJECT_COLORS.map(c => (
-                            <button key={c} onClick={() => setColor(c)} className={`w-8 h-8 rounded-full transition-transform hover:scale-110 ${color === c ? 'ring-2 ring-offset-2 ring-offset-[#0A0A15] ring-white' : ''}`} style={{ backgroundColor: c }}></button>
+                        {INSTALLATION_COLORS.map(c => (
+                            <button key={c} onClick={() => setColor(c)} className={`w-8 h-8 rounded-full transition-transform hover:scale-110 ${color === c ? 'ring-2 ring-offset-2 ring-offset-[var(--secondary)] ring-white' : ''}`} style={{ backgroundColor: c }}></button>
                         ))}
                     </div>
                 </div>
@@ -425,8 +444,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose, on
 };
 
 interface SettingsScreenProps {
-    hourlyRate: number;
-    setHourlyRate: (rate: number) => void;
+    hourlyWage: number;
+    setHourlyWage: (rate: number) => void;
+    panelRate: number;
+    setPanelRate: (rate: number) => void;
     currency: string;
     setCurrency: (currency: string) => void;
     onExport: () => void;
@@ -439,7 +460,7 @@ interface SettingsScreenProps {
     setLanguage: (lang: 'en' | 'cs') => void;
 }
 
-export const SettingsScreen: React.FC<SettingsScreenProps> = ({ hourlyRate, setHourlyRate, currency, setCurrency, onExport, onImport, onReset, currentUser, onSwitchUser, t, language, setLanguage }) => {
+export const SettingsScreen: React.FC<SettingsScreenProps> = ({ hourlyWage, setHourlyWage, panelRate, setPanelRate, currency, setCurrency, onExport, onImport, onReset, currentUser, onSwitchUser, t, language, setLanguage }) => {
     const importRef = useRef<HTMLInputElement>(null);
 
     return (
@@ -450,22 +471,32 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ hourlyRate, setH
                 <GlassCard className="p-6 space-y-4">
                     <h3 className="font-bold text-lg text-gray-300">{t('userProfile')}</h3>
                     <div className="flex items-center justify-between">
-                        <p>{t('loggedInAs')} <span className="font-bold text-[#00F5FF]">{currentUser.name}</span></p>
+                        <p>{t('loggedInAs')} <span className="font-bold text-[var(--accent-1)]">{currentUser.name}</span></p>
                         <button onClick={onSwitchUser} className="px-4 py-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold">{t('switchUser')}</button>
                     </div>
                 </GlassCard>
             )}
 
             <GlassCard className="p-6 space-y-4">
-                <h3 className="font-bold text-lg text-gray-300">{t('general')}</h3>
+                <h3 className="font-bold text-lg text-gray-300">{t('rates')}</h3>
                  <div>
-                    <label htmlFor="hourlyRate" className="text-sm text-gray-400">{t('hourlyRate')}</label>
+                    <label htmlFor="hourlyWage" className="text-sm text-gray-400">{t('hourlyWage')}</label>
                     <input
-                        id="hourlyRate"
+                        id="hourlyWage"
                         type="number"
-                        value={hourlyRate}
-                        onChange={(e) => setHourlyRate(Number(e.target.value))}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF]"
+                        value={hourlyWage}
+                        onChange={(e) => setHourlyWage(Number(e.target.value))}
+                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                    />
+                </div>
+                 <div>
+                    <label htmlFor="panelRate" className="text-sm text-gray-400">{t('ratePerPanel')}</label>
+                    <input
+                        id="panelRate"
+                        type="number"
+                        value={panelRate}
+                        onChange={(e) => setPanelRate(Number(e.target.value))}
+                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
                     />
                 </div>
                  <div>
@@ -475,7 +506,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({ hourlyRate, setH
                         type="text"
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF]"
+                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
                     />
                 </div>
             </GlassCard>
@@ -512,11 +543,15 @@ interface UserSelectionScreenProps {
     users: User[];
     onSelectUser: (userId: string) => void;
     onCreateUser: (name: string) => void;
+    onAdminLoginRequest: () => void;
     t: (key: string) => string;
 }
 
-export const UserSelectionScreen: React.FC<UserSelectionScreenProps> = ({ users, onSelectUser, onCreateUser, t }) => {
+export const UserSelectionScreen: React.FC<UserSelectionScreenProps> = ({ users, onSelectUser, onCreateUser, onAdminLoginRequest, t }) => {
     const [newUserName, setNewUserName] = useState('');
+    const [tapCount, setTapCount] = useState(0);
+    const tapTimeout = useRef<number | null>(null);
+
 
     const handleCreate = () => {
         if (newUserName.trim()) {
@@ -524,17 +559,37 @@ export const UserSelectionScreen: React.FC<UserSelectionScreenProps> = ({ users,
             setNewUserName('');
         }
     };
+    
+    const handleIconTap = () => {
+        if (tapTimeout.current) {
+            clearTimeout(tapTimeout.current);
+        }
+
+        const newTapCount = tapCount + 1;
+        setTapCount(newTapCount);
+
+        if (newTapCount >= 5) {
+            onAdminLoginRequest();
+            setTapCount(0);
+        } else {
+            tapTimeout.current = window.setTimeout(() => {
+                setTapCount(0);
+            }, 500);
+        }
+    }
 
     return (
-        <div className="w-full h-full bg-gradient-to-b from-[#000010] to-[#0A0A15] flex flex-col items-center justify-center p-8 text-white">
-            <AppIcon className="w-32 h-32 mb-8" />
+        <div className="w-full h-full bg-gradient-to-b from-[var(--primary)] to-[var(--secondary)] flex flex-col items-center justify-center p-8 text-white">
+            <div onClick={handleIconTap} className="cursor-pointer">
+                <AppIcon className="w-32 h-32 mb-8" />
+            </div>
             <h1 className="font-display text-4xl font-extrabold mb-2">{t('welcome')}</h1>
-            <h2 className="font-display text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#00F5FF] to-[#9D4EDD] mb-12">FlowTime Pro</h2>
+            <h2 className="font-display text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)] mb-12">{t('appName')}</h2>
 
             <GlassCard className="w-full max-w-sm p-6 space-y-4">
                 <h3 className="text-xl font-bold text-center">{t('selectOrCreateProfile')}</h3>
                 <div className="space-y-3 max-h-40 overflow-y-auto">
-                    {users.map(user => (
+                    {users.filter(u => !u.isAdmin).map(user => (
                         <button key={user.id} onClick={() => onSelectUser(user.id)} className="w-full p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors font-semibold">
                             {user.name}
                         </button>
@@ -547,7 +602,7 @@ export const UserSelectionScreen: React.FC<UserSelectionScreenProps> = ({ users,
                         value={newUserName}
                         onChange={(e) => setNewUserName(e.target.value)}
                         placeholder={t('enterNewUserName')}
-                        className="w-full p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF]"
+                        className="w-full p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
                     />
                     <FloatingButton onClick={handleCreate} ariaLabel={t('createUser')} className="w-full h-12 mt-4">
                         <span className="font-bold">{t('createUser')}</span>
@@ -571,33 +626,33 @@ const formatDuration = (seconds: number) => {
 
 const formatTime = (timestamp: number, locale: string) => new Date(timestamp).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
 
-const groupEntriesByDate = (entries: TimeEntry[]) => {
+const groupEntriesByDate = (entries: WorkEntry[]) => {
     return entries
-        .sort((a, b) => b.startTime - a.startTime)
+        .sort((a, b) => (b.type === 'hourly' ? b.startTime : b.date) - (a.type === 'hourly' ? a.startTime : a.date))
         .reduce((acc, entry) => {
-            const entryDate = new Date(entry.startTime);
+            const entryDate = new Date(entry.type === 'hourly' ? entry.startTime : entry.date);
             const key = entryDate.toDateString();
             if (!acc[key]) {
                 acc[key] = [];
             }
             acc[key].push(entry);
             return acc;
-        }, {} as Record<string, TimeEntry[]>);
+        }, {} as Record<string, WorkEntry[]>);
 };
 
-interface TimeEntryListScreenProps {
-    entries: TimeEntry[];
-    projects: Project[];
+interface WorkLogScreenProps {
+    entries: WorkEntry[];
+    installations: Installation[];
     onAdd: () => void;
-    onEdit: (entry: TimeEntry) => void;
-    onDelete: (entryId: string) => void;
+    onViewDetails: (entry: WorkEntry) => void;
     onHapticTrigger: (type: 'light' | 'medium' | 'error') => void;
-    t: (key: string) => string;
+    t: (key: string, ...args: any[]) => string;
     language: 'en' | 'cs';
+    isReadOnly?: boolean;
 }
 
-export const TimeEntryListScreen: React.FC<TimeEntryListScreenProps> = ({ entries, projects, onAdd, onEdit, onDelete, onHapticTrigger, t, language }) => {
-    const projectMap = useMemo(() => new Map(projects.map(p => [p.id, p])), [projects]);
+export const WorkLogScreen: React.FC<WorkLogScreenProps> = ({ entries, installations, onAdd, onViewDetails, onHapticTrigger, t, language, isReadOnly = false }) => {
+    const installationMap = useMemo(() => new Map(installations.map(p => [p.id, p])), [installations]);
     const groupedEntries = useMemo(() => groupEntriesByDate(entries), [entries]);
 
     const formatDateHeader = (dateString: string) => {
@@ -618,8 +673,8 @@ export const TimeEntryListScreen: React.FC<TimeEntryListScreenProps> = ({ entrie
             <div className="flex-grow overflow-y-auto pr-2 space-y-6">
                 {entries.length === 0 ? (
                      <div className="flex flex-col items-center justify-center h-full text-center text-gray-500">
-                        <p className="text-lg">{t('noTimeEntries')}</p>
-                        <p className="text-sm">{t('noTimeEntriesDesc')}</p>
+                        <p className="text-lg">{t('noWorkLogs')}</p>
+                        <p className="text-sm">{t('noWorkLogsDesc')}</p>
                     </div>
                 ) : (
                     Object.entries(groupedEntries).map(([dateKey, entriesOnDate]) => (
@@ -627,24 +682,31 @@ export const TimeEntryListScreen: React.FC<TimeEntryListScreenProps> = ({ entrie
                             <h3 className="font-bold text-gray-400 mb-2 px-4">{formatDateHeader(dateKey)}</h3>
                             <div className="space-y-3">
                                 {entriesOnDate.map(entry => {
-                                    const project = projectMap.get(entry.projectId);
+                                    const installation = installationMap.get(entry.installationId);
+                                    const isTimeEntry = entry.type === 'hourly';
                                     return (
-                                        <GlassCard key={entry.id} className="p-4 flex items-center gap-4">
-                                            <div className="w-2 h-10 rounded-full" style={{ backgroundColor: project?.color || '#888' }}></div>
-                                            <div className="flex-grow">
-                                                <p className="font-bold">{project?.name || t('unknownProject')}</p>
-                                                <p className="text-sm text-gray-400">
-                                                    {formatTime(entry.startTime, language)} - {entry.endTime ? formatTime(entry.endTime, language) : '...'}
-                                                </p>
-                                            </div>
-                                            <div className="text-right">
-                                                <p className="font-bold font-timer text-lg">{formatDuration(entry.duration)}</p>
-                                                 <div className="flex gap-2 mt-1">
-                                                    <button onClick={() => { onHapticTrigger('light'); onEdit(entry); }} className="text-gray-400 hover:text-white"><EditIcon /></button>
-                                                    <button onClick={() => { onHapticTrigger('light'); onDelete(entry.id); }} className="text-gray-400 hover:text-red-500"><TrashIcon /></button>
-                                                 </div>
-                                            </div>
-                                        </GlassCard>
+                                        <button key={entry.id} className="w-full text-left" onClick={() => { onHapticTrigger('light'); onViewDetails(entry); }}>
+                                            <GlassCard className="p-4 flex items-center gap-4 hover:bg-white/5 transition-colors">
+                                                <div className="w-2 h-10 rounded-full" style={{ backgroundColor: installation?.color || '#888' }}></div>
+                                                <div className="flex items-center gap-3">
+                                                    {isTimeEntry ? <TimerIcon /> : <PanelIcon />}
+                                                </div>
+                                                <div className="flex-grow">
+                                                    <p className="font-bold">{installation?.name || t('unknownInstallation')}</p>
+                                                    {isTimeEntry && (
+                                                        <p className="text-sm text-gray-400">
+                                                            {formatTime(entry.startTime, language)} - {entry.endTime ? formatTime(entry.endTime, language) : '...'}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                <div className="text-right flex items-center gap-2">
+                                                    {entry.notes && entry.notes.replace(/<[^>]*>?/gm, '').trim() !== '' && <NoteIcon className="w-4 h-4 text-gray-400"/>}
+                                                    <p className="font-bold font-timer text-lg">
+                                                        {isTimeEntry ? formatDuration(entry.duration) : `${entry.count} ${t('panels')}`}
+                                                    </p>
+                                                </div>
+                                            </GlassCard>
+                                        </button>
                                     );
                                 })}
                             </div>
@@ -652,37 +714,41 @@ export const TimeEntryListScreen: React.FC<TimeEntryListScreenProps> = ({ entrie
                     ))
                 )}
             </div>
-             <FloatingButton onClick={onAdd} ariaLabel={t('addEntry')} className="absolute bottom-4 right-4 w-16 h-16">
-                <PlusIcon />
-             </FloatingButton>
+            {!isReadOnly && (
+                 <FloatingButton onClick={onAdd} ariaLabel={t('addLog')} className="absolute bottom-4 right-4 w-16 h-16">
+                    <PlusIcon />
+                 </FloatingButton>
+            )}
         </div>
     );
 };
 
 interface TimeEntryModalProps {
     entry?: TimeEntry | null;
-    projects: Project[];
+    installations: Installation[];
     onClose: () => void;
-    onSave: (entryData: { projectId: string; startTime: number; endTime: number }) => void;
+    onSave: (entryData: { installationId: string; startTime: number; endTime: number, notes?: string }) => void;
     t: (key: string) => string;
 }
 
 const toISODate = (timestamp: number) => new Date(timestamp).toISOString().split('T')[0];
 const toISOTime = (timestamp: number) => new Date(timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
-export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, projects, onClose, onSave, t }) => {
+export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installations, onClose, onSave, t }) => {
     const isEditing = !!entry;
     const now = Date.now();
     
-    const [projectId, setProjectId] = useState(entry?.projectId || projects[0]?.id || '');
+    const [installationId, setInstallationId] = useState(entry?.installationId || installations[0]?.id || '');
     const [startDate, setStartDate] = useState(toISODate(entry?.startTime || now));
     const [startTime, setStartTime] = useState(toISOTime(entry?.startTime || now));
     const [endDate, setEndDate] = useState(toISODate(entry?.endTime || now));
     const [endTime, setEndTime] = useState(toISOTime(entry?.endTime || now));
+    const [notes, setNotes] = useState(entry?.notes || '');
+    const notesEditorRef = useRef<HTMLDivElement>(null);
     
     const handleSave = () => {
-        if (!projectId) {
-            alert(t('selectProject'));
+        if (!installationId) {
+            alert(t('selectInstallation'));
             return;
         }
 
@@ -694,47 +760,76 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, projects,
             return;
         }
         
-        onSave({ projectId, startTime: startTimestamp, endTime: endTimestamp });
+        onSave({ installationId, startTime: startTimestamp, endTime: endTimestamp, notes });
+    };
+
+    const handleNotesInput = (e: React.FormEvent<HTMLDivElement>) => {
+        setNotes(e.currentTarget.innerHTML);
+    };
+
+    const execCmd = (cmd: string) => {
+        document.execCommand(cmd, false);
+        notesEditorRef.current?.focus();
     };
 
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
             <GlassCard className="w-full max-w-sm p-6 space-y-6 text-white">
-                <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editEntry') : t('newEntry')}</h2>
+                <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editTimeEntry') : t('newTimeEntry')}</h2>
                 
                 <div>
-                    <label htmlFor="entryProject" className="text-sm text-gray-400">{t('project')}</label>
+                    <label htmlFor="entryInstallation" className="text-sm text-gray-400">{t('installation')}</label>
                     <select
-                        id="entryProject"
-                        value={projectId}
-                        onChange={(e) => setProjectId(e.target.value)}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF] appearance-none"
+                        id="entryInstallation"
+                        value={installationId}
+                        onChange={(e) => setInstallationId(e.target.value)}
+                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)] appearance-none"
                     >
-                        <option value="" disabled>{t('selectProject')}</option>
-                        {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                        <option value="" disabled>{t('selectInstallation')}</option>
+                        {installations.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <label htmlFor="startDate" className="text-sm text-gray-400">{t('startDate')}</label>
-                        <input id="startDate" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF]"/>
+                        <input id="startDate" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
                     </div>
                      <div>
                         <label htmlFor="startTime" className="text-sm text-gray-400">{t('startTime')}</label>
-                        <input id="startTime" type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF]"/>
+                        <input id="startTime" type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
                     </div>
                 </div>
                  <div className="grid grid-cols-2 gap-4">
                     <div>
                         <label htmlFor="endDate" className="text-sm text-gray-400">{t('endDate')}</label>
-                        <input id="endDate" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF]"/>
+                        <input id="endDate" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
                     </div>
                      <div>
                         <label htmlFor="endTime" className="text-sm text-gray-400">{t('endTime')}</label>
-                        <input id="endTime" type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[#00F5FF]"/>
+                        <input id="endTime" type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
                     </div>
                 </div>
+                
+                <div>
+                    <label className="text-sm text-gray-400">{t('notes')}</label>
+                    <div className="mt-1 border border-white/10 rounded-lg">
+                        <div className="flex gap-1 p-2 bg-white/5 rounded-t-lg border-b border-white/10">
+                            <button type="button" onClick={() => execCmd('bold')} className="font-bold w-8 h-8 rounded hover:bg-white/20">B</button>
+                            <button type="button" onClick={() => execCmd('italic')} className="italic w-8 h-8 rounded hover:bg-white/20">I</button>
+                            <button type="button" onClick={() => execCmd('underline')} className="underline w-8 h-8 rounded hover:bg-white/20">U</button>
+                        </div>
+                        <div
+                            ref={notesEditorRef}
+                            contentEditable
+                            onInput={handleNotesInput}
+                            dangerouslySetInnerHTML={{ __html: notes }}
+                            className="w-full min-h-[100px] p-3 focus:outline-none"
+                            aria-label={t('notes')}
+                        />
+                    </div>
+                </div>
+
 
                 <div className="flex gap-4">
                      <button onClick={onClose} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">{t('cancel')}</button>
@@ -746,3 +841,220 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, projects,
         </div>
     );
 };
+
+interface PanelLogModalProps {
+    entry?: PanelEntry | null;
+    installations: Installation[];
+    onClose: () => void;
+    onSave: (entryData: { installationId: string; date: number; count: number; notes?: string; }) => void;
+    t: (key: string) => string;
+}
+
+export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installations, onClose, onSave, t }) => {
+    const isEditing = !!entry;
+    const now = Date.now();
+
+    const [installationId, setInstallationId] = useState(entry?.installationId || installations[0]?.id || '');
+    const [date, setDate] = useState(toISODate(entry?.date || now));
+    const [count, setCount] = useState(entry?.count || 0);
+    const [notes, setNotes] = useState(entry?.notes || '');
+    const notesEditorRef = useRef<HTMLDivElement>(null);
+
+    const handleSave = () => {
+        if (!installationId) {
+            alert(t('selectInstallation'));
+            return;
+        }
+        if (count <= 0) {
+            alert('Please enter a valid panel count.'); // Not translated for simplicity, can be added
+            return;
+        }
+        
+        const dateTimestamp = new Date(date).getTime();
+        onSave({ installationId, date: dateTimestamp, count, notes });
+    };
+
+    const handleNotesInput = (e: React.FormEvent<HTMLDivElement>) => {
+        setNotes(e.currentTarget.innerHTML);
+    };
+
+    const execCmd = (cmd: string) => {
+        document.execCommand(cmd, false);
+        notesEditorRef.current?.focus();
+    };
+
+
+    return (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <GlassCard className="w-full max-w-sm p-6 space-y-6 text-white">
+                <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editPanelLog') : t('newPanelLog')}</h2>
+                
+                <div>
+                    <label htmlFor="panelLogInstallation" className="text-sm text-gray-400">{t('installation')}</label>
+                    <select
+                        id="panelLogInstallation"
+                        value={installationId}
+                        onChange={(e) => setInstallationId(e.target.value)}
+                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)] appearance-none"
+                    >
+                        <option value="" disabled>{t('selectInstallation')}</option>
+                        {installations.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                    </select>
+                </div>
+                <div>
+                    <label htmlFor="panelLogDate" className="text-sm text-gray-400">{t('date')}</label>
+                    <input id="panelLogDate" type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
+                </div>
+                <div>
+                    <label htmlFor="panelCount" className="text-sm text-gray-400">{t('panelsInstalled')}</label>
+                    <input
+                        id="panelCount"
+                        type="number"
+                        value={count}
+                        onChange={(e) => setCount(Number(e.target.value))}
+                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                    />
+                </div>
+                 <div>
+                    <label className="text-sm text-gray-400">{t('notes')}</label>
+                    <div className="mt-1 border border-white/10 rounded-lg">
+                        <div className="flex gap-1 p-2 bg-white/5 rounded-t-lg border-b border-white/10">
+                            <button type="button" onClick={() => execCmd('bold')} className="font-bold w-8 h-8 rounded hover:bg-white/20">B</button>
+                            <button type="button" onClick={() => execCmd('italic')} className="italic w-8 h-8 rounded hover:bg-white/20">I</button>
+                            <button type="button" onClick={() => execCmd('underline')} className="underline w-8 h-8 rounded hover:bg-white/20">U</button>
+                        </div>
+                        <div
+                            ref={notesEditorRef}
+                            contentEditable
+                            onInput={handleNotesInput}
+                            dangerouslySetInnerHTML={{ __html: notes }}
+                            className="w-full min-h-[100px] p-3 focus:outline-none"
+                            aria-label={t('notes')}
+                        />
+                    </div>
+                </div>
+                <div className="flex gap-4">
+                     <button onClick={onClose} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">{t('cancel')}</button>
+                     <FloatingButton onClick={handleSave} ariaLabel={t('save')} className="flex-1 h-12">
+                        <span className="font-bold">{t('save')}</span>
+                     </FloatingButton>
+                </div>
+            </GlassCard>
+        </div>
+    );
+};
+
+interface AddEntryChoiceModalProps {
+    onClose: () => void;
+    onSelect: (type: 'time' | 'panel') => void;
+    t: (key: string) => string;
+}
+
+export const AddEntryChoiceModal: React.FC<AddEntryChoiceModalProps> = ({ onClose, onSelect, t }) => {
+    return (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <GlassCard className="w-full max-w-sm p-6 space-y-6 text-white">
+                 <h2 className="font-display text-2xl font-bold text-center">{t('addEntryChoiceTitle')}</h2>
+                 <div className="flex flex-col gap-4">
+                    <button onClick={() => onSelect('time')} className="w-full p-4 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold flex items-center justify-center gap-3"><TimerIcon/> {t('addTimeEntry')}</button>
+                    <button onClick={() => onSelect('panel')} className="w-full p-4 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold flex items-center justify-center gap-3"><PanelIcon/> {t('addPanelLog')}</button>
+                 </div>
+                 <button onClick={onClose} className="w-full p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors">{t('cancel')}</button>
+            </GlassCard>
+        </div>
+    )
+};
+
+interface AdminLoginModalProps {
+    onClose: () => void;
+    onLogin: (password: string) => void;
+    t: (key: string) => string;
+}
+
+export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onClose, onLogin, t }) => {
+    const [password, setPassword] = useState('');
+    
+    const handleLogin = () => {
+        onLogin(password);
+    }
+
+    return (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <GlassCard className="w-full max-w-sm p-6 space-y-6 text-white">
+                 <h2 className="font-display text-2xl font-bold text-center">{t('adminLogin')}</h2>
+                 <div>
+                    <label htmlFor="adminPassword" className="text-sm text-gray-400">{t('password')}</label>
+                    <input
+                        id="adminPassword"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
+                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                    />
+                </div>
+                 <div className="flex gap-4">
+                     <button onClick={onClose} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">{t('cancel')}</button>
+                     <FloatingButton onClick={handleLogin} ariaLabel={t('login')} className="flex-1 h-12">
+                        <span className="font-bold">{t('login')}</span>
+                     </FloatingButton>
+                </div>
+            </GlassCard>
+        </div>
+    )
+}
+
+interface WorkEntryDetailModalProps {
+    entry: WorkEntry;
+    installation?: Installation;
+    onClose: () => void;
+    onEdit: (entry: WorkEntry) => void;
+    onDelete: (entryId: string) => void;
+    t: (key: string, ...args: any[]) => string;
+    language: 'en' | 'cs';
+    isReadOnly?: boolean;
+}
+
+export const WorkEntryDetailModal: React.FC<WorkEntryDetailModalProps> = ({ entry, installation, onClose, onEdit, onDelete, t, language, isReadOnly }) => {
+    const isTimeEntry = entry.type === 'hourly';
+
+    return (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <GlassCard className="w-full max-w-sm p-6 space-y-4 text-white">
+                <h2 className="font-display text-2xl font-bold text-center">{t('workEntryDetails')}</h2>
+
+                <div className="space-y-2 text-sm">
+                    <p><span className="font-semibold text-gray-400">{t('installation')}:</span> {installation?.name || t('unknownInstallation')}</p>
+                    {isTimeEntry ? (
+                       <>
+                         <p><span className="font-semibold text-gray-400">{t('duration')}:</span> {formatDuration(entry.duration)}</p>
+                         <p><span className="font-semibold text-gray-400">{t('period')}:</span> {formatTime(entry.startTime, language)} - {entry.endTime ? formatTime(entry.endTime, language) : '...'}</p>
+                       </>
+                    ) : (
+                         <p><span className="font-semibold text-gray-400">{t('panelsInstalled')}:</span> {entry.count}</p>
+                    )}
+                     <p><span className="font-semibold text-gray-400">{t('date')}:</span> {new Date(isTimeEntry ? entry.startTime : entry.date).toLocaleDateString(language === 'cs' ? 'cs-CZ' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                </div>
+
+                <div className="space-y-2">
+                    <h3 className="font-bold text-lg text-gray-300 border-b border-white/10 pb-2 mb-2">{t('notes')}</h3>
+                    {entry.notes ? (
+                        <div className="text-sm text-gray-300 max-h-40 overflow-y-auto" dangerouslySetInnerHTML={{ __html: entry.notes }} />
+                    ) : (
+                        <p className="text-gray-500 italic text-sm">{t('noNotes')}</p>
+                    )}
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                    <button onClick={onClose} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold">{t('cancel')}</button>
+                    {!isReadOnly && (
+                        <div className="flex-1 flex gap-2">
+                            <button onClick={() => onEdit(entry)} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold">{t('edit')}</button>
+                            <button onClick={() => onDelete(entry.id)} className="flex-1 p-3 bg-red-500/20 text-red-400 rounded-full hover:bg-red-500/40 transition-colors font-semibold">{t('delete')}</button>
+                        </div>
+                    )}
+                </div>
+            </GlassCard>
+        </div>
+    )
+}

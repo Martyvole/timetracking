@@ -1,7 +1,7 @@
 {
-  "short_name": "FlowTime",
-  "name": "FlowTime Pro",
-  "description": "An ultra-modern PWA time tracking application designed for iPhone 15 Pro.",
+  "short_name": "SolarWork",
+  "name": "Solar Work Report",
+  "description": "A PWA for tracking work on solar power plant installations.",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -23,6 +23,6 @@
   "start_url": ".",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#0A0A15",
-  "background_color": "#000010"
+  "theme_color": "#0d1b2a",
+  "background_color": "#0d1b2a"
 }
