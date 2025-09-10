@@ -1,5 +1,5 @@
 {
-  "name": "Solar Work Report",
+  "name": "MST",
   "description": "A PWA for tracking work on solar power plant installations, supporting both hourly wages for construction and piece-rate for panel mounting.",
   "requestFramePermissions": [
     "camera"

@@ -10,25 +10,38 @@ const Icon: React.FC<{ children: React.ReactNode; className?: string }> = ({ chi
     </svg>
 );
 
-export const AppIcon: React.FC<{ className?: string }> = ({ className }) => (
-    <div className={`relative w-24 h-24 ${className}`}>
-        <div className="absolute inset-0 bg-gradient-to-br from-[#FFC300] to-[#FF5733] rounded-[28px] blur-lg opacity-50"></div>
-        <div className="relative w-full h-full bg-[rgba(27, 38, 59, 0.8)] backdrop-blur-md rounded-[24px] border border-white/10 flex items-center justify-center">
-             <svg width="60" height="60" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+const MSTLogo: React.FC<{ className?: string }> = ({ className }) => (
+    <div className={`relative w-32 h-32 ${className}`}>
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--accent-1)] to-[var(--accent-2)] rounded-3xl blur-xl opacity-50"></div>
+        <div className="relative w-full h-full bg-black/20 border border-[var(--border-color)] rounded-3xl flex items-center justify-center backdrop-blur-sm">
+            <svg viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-24 h-24">
                 <defs>
-                    <linearGradient id="iconGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="#FFC300"/>
-                        <stop offset="100%" stopColor="#FF5733"/>
+                    <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stopColor="var(--accent-1)"/>
+                        <stop offset="100%" stopColor="var(--accent-2)"/>
                     </linearGradient>
                 </defs>
-                <circle cx="50" cy="50" r="25" fill="url(#iconGrad)"/>
-                <path d="M50 15 V5 M50 95 V85 M15 50 H5 M95 50 H85 M29.289 29.289 L22.218 22.218 M77.782 77.782 L70.711 70.711 M29.289 70.711 L22.218 77.782 M77.782 22.218 L70.711 29.289" stroke="url(#iconGrad)" strokeWidth="4" strokeLinecap="round"/>
-                <rect x="35" y="42" width="30" height="16" fill="rgba(13, 27, 42, 0.7)" stroke="#415a77" strokeWidth="2" rx="2"/>
-                <path d="M35 46 H 65 M35 52 H 65 M42.5 42 V 58 M50 42 V 58 M57.5 42 V 58" stroke="#415a77" strokeWidth="1"/>
+                {/* Solar panel grid on top */}
+                <g opacity="0.5">
+                    <path d="M 20 20 L 100 20 L 100 28 L 20 28 Z" fill="url(#logoGrad)" />
+                    <rect x="20" y="21" width="80" height="6" fill="#000" opacity="0.3" />
+                    <line x1="30" y1="20" x2="30" y2="28" stroke="#fff" strokeWidth="0.5" opacity="0.5" />
+                    <line x1="40" y1="20" x2="40" y2="28" stroke="#fff" strokeWidth="0.5" opacity="0.5" />
+                    <line x1="50" y1="20" x2="50" y2="28" stroke="#fff" strokeWidth="0.5" opacity="0.5" />
+                    <line x1="60" y1="20" x2="60" y2="28" stroke="#fff" strokeWidth="0.5" opacity="0.5" />
+                    <line x1="70" y1="20" x2="70" y2="28" stroke="#fff" strokeWidth="0.5" opacity="0.5" />
+                    <line x1="80" y1="20" x2="80" y2="28" stroke="#fff" strokeWidth="0.5" opacity="0.5" />
+                    <line x1="90" y1="20" x2="90" y2="28" stroke="#fff" strokeWidth="0.5" opacity="0.5" />
+                </g>
+                {/* Letters */}
+                <text x="5" y="85" fontFamily="Manrope, sans-serif" fontWeight="800" fontSize="70" fill="url(#logoGrad)">M</text>
+                <text x="50" y="85" fontFamily="Manrope, sans-serif" fontWeight="800" fontSize="70" fill="url(#logoGrad)">S</text>
+                <text x="85" y="85" fontFamily="Manrope, sans-serif" fontWeight="800" fontSize="70" fill="url(#logoGrad)">T</text>
             </svg>
         </div>
     </div>
 );
+
 
 export const TimerIcon: React.FC = () => <Icon><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2Zm0 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm-1 4v5h5v-2h-3V8H11Z" /></Icon>;
 export const StatsIcon: React.FC = () => <Icon><path d="M3 12h2v9H3v-9Zm5-4h2v13H8V8Zm5-5h2v18h-2V3Zm5 9h2v9h-2v-9Z" /></Icon>;
@@ -43,14 +56,13 @@ export const KebabMenuIcon: React.FC = () => <Icon><path d="M12 7a2 2 0 1 0 0-4 
 export const EditIcon: React.FC = () => <Icon><path d="m16.262 3.126 4.612 4.612-11.88 11.88-5.717 1.117 1.117-5.717L16.262 3.126ZM18.429 1.943l-2.167 2.167-4.612-4.612 2.167-2.167a1 1 0 0 1 1.414 0l3.198 3.198a1 1 0 0 1 0 1.414Z"/></Icon>;
 export const TrashIcon: React.FC = () => <Icon><path d="M4 6h16v2H4V6Zm2 14v-9h12v9H6Zm2-7h2v5H8v-5Zm4 0h2v5h-2v-5Zm-6-5h10V4H8v2Z"/></Icon>;
 export const PanelIcon: React.FC = () => <Icon><path d="M2 2h20v20H2V2zm2 2v3h16V4H4zm0 5v4h7V9H4zm9 0v4h7V9h-7zm-9 6v4h7v-4H4zm9 0v4h7v-4h-7z"/></Icon>;
-// FIX: Added className prop to NoteIcon to allow custom styling.
 export const NoteIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className}><path d="M4 2.5A1.5 1.5 0 0 0 2.5 4v16A1.5 1.5 0 0 0 4 21.5h16a1.5 1.5 0 0 0 1.5-1.5V4A1.5 1.5 0 0 0 20 2.5H4ZM4 4h16v16H4V4Zm3 3.5h10v2H7v-2Zm0 4h10v2H7v-2Zm0 4h6v2H7v-2Z"/></Icon>;
 
 
 // --- UI Components ---
 
-export const GlassCard: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-    <div className={`bg-glass backdrop-blur-2xl border border-white/10 rounded-[32px] overflow-hidden ${className}`}>
+export const Card: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
+    <div className={`bg-[var(--secondary)] border border-[var(--border-color)] rounded-3xl overflow-hidden ${className}`}>
         {children}
     </div>
 );
@@ -62,8 +74,8 @@ export const FloatingButton: React.FC<{ onClick: () => void; children: React.Rea
         disabled={disabled}
         className={`relative group flex items-center justify-center transition-transform duration-300 ease-in-out hover:scale-105 active:scale-95 ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
-        <div className={`absolute inset-0 bg-gradient-to-br from-[var(--accent-1)] via-[var(--accent-2)] to-[var(--accent-3)] rounded-full blur-xl group-hover:blur-2xl transition-all duration-300 opacity-60 group-hover:opacity-80 ${disabled ? 'opacity-30' : ''}`}></div>
-        <div className={`relative w-full h-full bg-gradient-to-br from-[rgba(255,195,0,0.8)] via-[rgba(255,87,51,0.8)] to-[rgba(65,90,119,0.8)] text-white rounded-full flex items-center justify-center shadow-lg ${disabled ? 'from-[rgba(128,128,128,0.5)] to-[rgba(80,80,80,0.5)]' : ''}`}>
+        <div className={`absolute inset-0 bg-gradient-to-br from-[var(--accent-1)] to-[var(--accent-2)] rounded-full blur-lg group-hover:blur-xl transition-all duration-300 opacity-70 group-hover:opacity-90 ${disabled ? 'opacity-30' : ''}`}></div>
+        <div className={`relative w-full h-full bg-gradient-to-br from-[var(--accent-1)] to-[var(--accent-2)] text-[var(--primary)] rounded-full flex items-center justify-center shadow-lg font-bold`}>
             {children}
         </div>
     </button>
@@ -84,6 +96,8 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeScreen, setActiveScr
         { screen: 'installations', icon: <InstallationsIcon />, labelKey: 'installations' },
         { screen: 'settings', icon: <SettingsIcon />, labelKey: 'settings' },
     ];
+    const activeIndex = useMemo(() => navItems.findIndex(item => item.screen === activeScreen), [activeScreen]);
+
 
     const handleNavClick = (screen: Screen) => {
         setActiveScreen(screen);
@@ -91,29 +105,32 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeScreen, setActiveScr
     };
 
     return (
-        <GlassCard className="fixed bottom-0 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm mx-auto mb-3 z-50">
-            <div className="flex justify-around items-center h-20 px-2">
-                {navItems.map(item => (
-                    <button
-                        key={item.screen}
-                        onClick={() => handleNavClick(item.screen)}
-                        className={`relative flex flex-col items-center justify-center w-1/5 h-full text-xs transition-colors duration-300 rounded-2xl ${
-                            activeScreen === item.screen ? 'text-[var(--accent-1)]' : 'text-gray-400 hover:text-white'
-                        }`}
-                    >
-                        {activeScreen === item.screen && (
-                            <span className="absolute inset-0 bg-white/5 rounded-2xl -z-10"></span>
-                        )}
-                        <div className={`transition-transform duration-300 ${activeScreen === item.screen ? 'scale-110 -translate-y-1' : ''}`}>
-                            {item.icon}
-                        </div>
-                        <span className={`mt-1 font-semibold transition-opacity duration-300 ${activeScreen === item.screen ? 'opacity-100' : 'opacity-70'}`}>
-                            {t(item.labelKey)}
-                        </span>
-                    </button>
-                ))}
-            </div>
-        </GlassCard>
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm mx-auto mb-3 z-50">
+            <Card className="p-2">
+                <div className="relative flex justify-around items-center h-16">
+                     <div
+                        className="absolute top-1/2 -translate-y-1/2 left-0 h-12 w-1/5 bg-white/5 rounded-full transition-transform duration-300 ease-in-out"
+                        style={{ transform: `translateX(${activeIndex * 100}%) translateY(-50%)` }}
+                    />
+                    {navItems.map(item => (
+                        <button
+                            key={item.screen}
+                            onClick={() => handleNavClick(item.screen)}
+                            className={`relative flex flex-col items-center justify-center w-1/5 h-full text-xs transition-colors duration-300 rounded-2xl z-10 ${
+                                activeScreen === item.screen ? 'text-[var(--accent-1)]' : 'text-gray-400 hover:text-white'
+                            }`}
+                        >
+                            <div className={`transition-transform duration-300 ${activeScreen === item.screen ? 'scale-110' : ''}`}>
+                                {item.icon}
+                            </div>
+                            <span className={`mt-1 font-semibold transition-opacity duration-300 ${activeScreen === item.screen ? 'opacity-100' : 'opacity-70'}`}>
+                                {t(item.labelKey)}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            </Card>
+        </div>
     );
 };
 
@@ -125,6 +142,12 @@ export const OfflineIndicator: React.FC<{ t: (key: string) => string }> = ({ t }
 
 
 // --- Feature Components ---
+const AuroraBackground: React.FC = () => (
+    <div className="absolute inset-0 overflow-hidden rounded-full">
+        <div className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] bg-gradient-to-br from-[var(--accent-1)] via-[var(--accent-2)] to-[var(--accent-3)] animate-spin-slow"/>
+    </div>
+);
+
 
 interface TimerDisplayProps {
     elapsedTime: number;
@@ -151,54 +174,23 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({ elapsedTime, earning
         }).format(amount);
     }
 
-    const radius = 130;
-    const circumference = 2 * Math.PI * radius;
-    const progress = (elapsedTime % 60) / 60;
-
     return (
-        <div className="relative flex flex-col items-center justify-center w-[300px] h-[300px] md:w-[350px] md:h-[350px] drop-shadow-[0_0_25px_var(--glow)]">
-             <svg className="absolute w-full h-full transform -rotate-90" viewBox="0 0 300 300">
-                <defs>
-                    <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                         <stop offset="0%" stopColor="var(--accent-1)" />
-                         <stop offset="100%" stopColor="var(--accent-2)" />
-                    </linearGradient>
-                     <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur" />
-                        <feMerge>
-                            <feMergeNode in="blur" />
-                            <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                    </filter>
-                </defs>
-                <circle cx="150" cy="150" r={radius} stroke="rgba(255,255,255,0.05)" strokeWidth="1" fill="rgba(13, 27, 42, 0.5)" />
-                <circle cx="150" cy="150" r={radius - 1} fill="transparent" stroke="rgba(0,0,0,0.5)" strokeWidth="15" />
-                <g filter="url(#neonGlow)">
-                    <circle
-                        cx="150"
-                        cy="150"
-                        r={radius}
-                        stroke="url(#timerGradient)"
-                        strokeWidth="8"
-                        fill="transparent"
-                        strokeLinecap="round"
-                        strokeDasharray={circumference}
-                        strokeDashoffset={circumference - progress * circumference}
-                        className={isActive ? "transition-[stroke-dashoffset] duration-1000 ease-linear" : ""}
-                    />
-                </g>
-            </svg>
+        <div className="relative flex flex-col items-center justify-center w-[300px] h-[300px] md:w-[350px] md:h-[350px]">
+            <div className={`absolute inset-0 transition-opacity duration-500 ${isActive ? 'opacity-30' : 'opacity-10'}`}>
+                <AuroraBackground />
+            </div>
+            <div className="absolute inset-4 bg-[var(--primary)] rounded-full" />
+
             <div className="z-10 flex flex-col items-center">
                 <p 
-                    className="font-timer text-6xl md:text-7xl font-thin tracking-tighter text-white"
-                    style={{ textShadow: '0 0 10px var(--glow), 0 0 20px var(--soft-glow)'}}
+                    className="font-timer text-6xl md:text-7xl font-light tracking-tighter text-white"
                 >
                     {formatTime(elapsedTime)}
                 </p>
-                <p className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)]">
+                <p className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)]">
                     {formatCurrency(earnings)}
                 </p>
-                 <p className="mt-2 text-gray-400 text-sm truncate max-w-[200px]">{activeInstallation ? activeInstallation.name : t('noInstallationSelected')}</p>
+                 <p className="mt-2 text-[var(--text-secondary)] text-sm truncate max-w-[200px]">{activeInstallation ? activeInstallation.name : t('noInstallationSelected')}</p>
             </div>
         </div>
     );
@@ -226,9 +218,6 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, hourlyW
         const totalHours = timeEntries.reduce((acc, e) => acc + e.duration, 0) / 3600;
         const totalPanels = panelEntries.reduce((acc, e) => acc + e.count, 0);
 
-        // NOTE: In a more complex app, this calculation should happen in the parent
-        // especially for admin 'all' view with different user rates.
-        // For now, it uses the passed-in rates (which will be the admin's rate for 'all').
         const hourlyEarnings = totalHours * hourlyWage;
         const panelEarnings = totalPanels * panelRate;
         const totalEarnings = hourlyEarnings + panelEarnings;
@@ -266,61 +255,68 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, hourlyW
     const nonAdminUsers = useMemo(() => allUsers.filter(u => !u.isAdmin), [allUsers]);
 
     return (
-        <div className="p-4 space-y-6 text-white">
+        <div className="p-4 space-y-6 text-white fade-in">
             <h2 className="font-display text-4xl font-extrabold text-center">{t('statistics')}</h2>
-            {userName && <p className="text-center text-gray-400 -mt-4">{t('forUser', userName)}</p>}
+            {userName && <p className="text-center text-[var(--text-secondary)] -mt-4">{t('forUser', userName)}</p>}
             
-            {isAdmin && (
-                 <GlassCard className="p-4">
-                     <select 
-                        value={adminView}
-                        onChange={(e) => setAdminView(e.target.value)}
-                        className="w-full p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)] appearance-none text-center font-bold"
-                     >
-                        <option value="all">{t('allUsers')}</option>
-                        {nonAdminUsers.map(user => <option key={user.id} value={user.id}>{user.name}</option>)}
-                     </select>
-                 </GlassCard>
-            )}
-
-             <GlassCard className="p-4 text-center">
-                <p className="text-gray-400 text-sm">{t('totalEarnings')}</p>
-                <p className="text-4xl font-bold font-timer text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)]">{formatCurrency(totalEarnings)}</p>
-            </GlassCard>
-
-            <div className="grid grid-cols-2 gap-4 text-center">
-                <GlassCard className="p-4">
-                    <p className="text-gray-400 text-sm">{t('totalHours')}</p>
-                    <p className="text-3xl font-bold font-timer">{totalHours.toFixed(1)}</p>
-                </GlassCard>
-                <GlassCard className="p-4">
-                     <p className="text-gray-400 text-sm">{t('totalPanels')}</p>
-                    <p className="text-3xl font-bold font-timer">{totalPanels}</p>
-                </GlassCard>
+            <div className={`grid grid-cols-2 ${isAdmin ? 'grid-rows-4' : 'grid-rows-3'} gap-4 auto-rows-fr h-[calc(100dvh-200px)]`}>
+                 {isAdmin && (
+                     <div className="col-span-2">
+                         <Card className="p-4 h-full">
+                             <select 
+                                value={adminView}
+                                onChange={(e) => setAdminView(e.target.value)}
+                                className="custom-input w-full h-full text-center font-bold"
+                             >
+                                <option value="all">{t('allUsers')}</option>
+                                {nonAdminUsers.map(user => <option key={user.id} value={user.id}>{user.name}</option>)}
+                             </select>
+                         </Card>
+                     </div>
+                 )}
+                <div className="col-span-2">
+                    <Card className="p-4 flex flex-col justify-center items-center h-full text-center bg-gradient-to-br from-[var(--secondary)] to-black/20">
+                        <p className="text-[var(--text-secondary)] text-sm">{t('totalEarnings')}</p>
+                        <p className="text-5xl font-bold font-timer text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)]">{formatCurrency(totalEarnings)}</p>
+                    </Card>
+                </div>
+                 <div className="col-span-1">
+                    <Card className="p-4 flex flex-col justify-center items-center h-full text-center">
+                        <p className="text-[var(--text-secondary)] text-sm">{t('totalHours')}</p>
+                        <p className="text-4xl font-bold font-timer">{totalHours.toFixed(1)}</p>
+                    </Card>
+                 </div>
+                 <div className="col-span-1">
+                     <Card className="p-4 flex flex-col justify-center items-center h-full text-center">
+                         <p className="text-[var(--text-secondary)] text-sm">{t('totalPanels')}</p>
+                        <p className="text-4xl font-bold font-timer">{totalPanels}</p>
+                    </Card>
+                 </div>
+                <div className="col-span-2">
+                    <Card className="p-4 h-full">
+                        <h3 className="text-lg font-bold mb-4 ml-2">{t('weeklyHours')}</h3>
+                        <ResponsiveContainer width="100%" height="calc(100% - 40px)">
+                            <BarChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 20 }}>
+                                <XAxis dataKey="name" stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
+                                <YAxis stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
+                                <Tooltip
+                                    contentStyle={{ background: 'var(--primary)', border: '1px solid var(--border-color)', borderRadius: '16px', color: 'white' }}
+                                    cursor={<Rectangle fill="rgba(255,255,255,0.05)" />}
+                                />
+                                <Bar dataKey="hours" radius={[8, 8, 0, 0]}>
+                                    {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill="url(#colorUv)" />)}
+                                </Bar>
+                                 <defs>
+                                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--accent-1)" stopOpacity={0.8}/>
+                                        <stop offset="95%" stopColor="var(--accent-2)" stopOpacity={0.8}/>
+                                    </linearGradient>
+                                </defs>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </Card>
+                </div>
             </div>
-            
-            <GlassCard className="p-4 h-64">
-                <h3 className="text-lg font-bold mb-4 ml-2">{t('weeklyHours')}</h3>
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 20 }}>
-                        <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                        <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                        <Tooltip
-                            contentStyle={{ background: 'var(--glass)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', color: 'white' }}
-                            cursor={<Rectangle fill="rgba(255,255,255,0.05)" />}
-                        />
-                        <Bar dataKey="hours" radius={[8, 8, 0, 0]}>
-                            {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill="url(#colorUv)" />)}
-                        </Bar>
-                         <defs>
-                            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="var(--accent-1)" stopOpacity={0.8}/>
-                                <stop offset="95%" stopColor="var(--accent-2)" stopOpacity={0.8}/>
-                            </linearGradient>
-                        </defs>
-                    </BarChart>
-                </ResponsiveContainer>
-            </GlassCard>
         </div>
     );
 };
@@ -348,7 +344,7 @@ export const InstallationList: React.FC<InstallationListProps> = ({ installation
     };
     
     return (
-        <div className="p-4 space-y-4 text-white relative h-full flex flex-col">
+        <div className="p-4 space-y-4 text-white relative h-full flex flex-col fade-in">
             <h2 className="font-display text-4xl font-extrabold text-center">{t('installationsTitle')}</h2>
             <div className="space-y-3 flex-grow overflow-y-auto pr-2">
                 {installations.length === 0 ? (
@@ -358,27 +354,27 @@ export const InstallationList: React.FC<InstallationListProps> = ({ installation
                     </div>
                 ) : installations.map(p => (
                     <div key={p.id} className="relative">
-                        <GlassCard className={`w-full transition-all duration-300 flex items-center justify-between ${activeInstallationId === p.id ? 'border-[var(--accent-1)] shadow-[0_0_20px_var(--glow)]' : ''}`}>
+                        <Card className={`w-full transition-all duration-300 flex items-center justify-between ${activeInstallationId === p.id ? 'border-[var(--accent-1)] shadow-[0_0_20px_var(--glow)]' : ''}`}>
                             <button onClick={() => onSelectInstallation(p.id)} className="flex-grow flex items-center gap-4 p-4 text-left">
                                 <div className="w-4 h-4 rounded-full" style={{backgroundColor: p.color}}></div>
                                 <span className="font-bold">{p.name}</span>
-                                {activeInstallationId === p.id && <div className="w-2 h-2 rounded-full bg-[var(--accent-1)] ml-auto"></div>}
+                                {activeInstallationId === p.id && <div className="w-2 h-2 rounded-full bg-[var(--accent-1)] animate-pulse ml-auto"></div>}
                             </button>
                             {!isReadOnly && (
                                 <button onClick={() => toggleMenu(p.id)} className="p-4 text-gray-400 hover:text-white">
                                     <KebabMenuIcon />
                                 </button>
                             )}
-                        </GlassCard>
+                        </Card>
                         {menuOpenFor === p.id && (
-                             <GlassCard className="absolute right-0 top-full mt-2 w-40 z-10 p-2">
+                             <Card className="absolute right-0 top-full mt-2 w-40 z-20 p-2">
                                  <button onClick={() => { onEditInstallation(p); setMenuOpenFor(null); }} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-white/5">
                                     <EditIcon /> {t('edit')}
                                  </button>
                                  <button onClick={() => { onDeleteInstallation(p.id); setMenuOpenFor(null); }} className="flex items-center gap-2 w-full text-left px-3 py-2 rounded-lg hover:bg-white/5 text-red-500">
                                      <TrashIcon /> {t('delete')}
                                  </button>
-                             </GlassCard>
+                             </Card>
                         )}
                     </div>
                 ))}
@@ -411,21 +407,21 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({ installati
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <GlassCard className="w-full max-w-sm p-6 space-y-6">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-sm p-6 space-y-6">
                 <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editInstallation') : t('newInstallation')}</h2>
                 <div>
-                    <label htmlFor="installationName" className="text-sm text-gray-400">{t('installationName')}</label>
+                    <label htmlFor="installationName" className="text-sm text-[var(--text-secondary)]">{t('installationName')}</label>
                     <input
                         id="installationName"
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                        className="custom-input mt-1"
                     />
                 </div>
                 <div>
-                    <label className="text-sm text-gray-400">{t('color')}</label>
+                    <label className="text-sm text-[var(--text-secondary)]">{t('color')}</label>
                     <div className="flex justify-between mt-2">
                         {INSTALLATION_COLORS.map(c => (
                             <button key={c} onClick={() => setColor(c)} className={`w-8 h-8 rounded-full transition-transform hover:scale-110 ${color === c ? 'ring-2 ring-offset-2 ring-offset-[var(--secondary)] ring-white' : ''}`} style={{ backgroundColor: c }}></button>
@@ -435,10 +431,10 @@ export const InstallationModal: React.FC<InstallationModalProps> = ({ installati
                 <div className="flex gap-4">
                      <button onClick={onClose} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">{t('cancel')}</button>
                      <FloatingButton onClick={handleSave} ariaLabel={t('save')} className="flex-1 h-12">
-                        <span className="font-bold">{t('save')}</span>
+                        <span>{t('save')}</span>
                      </FloatingButton>
                 </div>
-            </GlassCard>
+            </Card>
         </div>
     );
 };
@@ -462,79 +458,110 @@ interface SettingsScreenProps {
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = ({ hourlyWage, setHourlyWage, panelRate, setPanelRate, currency, setCurrency, onExport, onImport, onReset, currentUser, onSwitchUser, t, language, setLanguage }) => {
     const importRef = useRef<HTMLInputElement>(null);
+    const [localHourlyWage, setLocalHourlyWage] = useState(String(hourlyWage));
+    const [localPanelRate, setLocalPanelRate] = useState(String(panelRate));
+
+    useEffect(() => {
+        setLocalHourlyWage(String(hourlyWage));
+    }, [hourlyWage]);
+    
+    useEffect(() => {
+        setLocalPanelRate(String(panelRate));
+    }, [panelRate]);
+
+    const handleBlur = (
+        localValue: string,
+        setter: (val: number) => void,
+        localSetter: (val: string) => void,
+        fallbackValue: number
+    ) => {
+        const num = parseFloat(localValue);
+        if (localValue.trim() === '') {
+            setter(0);
+        } else if (!isNaN(num) && num >= 0) {
+            setter(num);
+        } else {
+            localSetter(String(fallbackValue));
+        }
+    };
+
 
     return (
-        <div className="p-4 space-y-6 text-white">
+        <div className="p-4 space-y-6 text-white fade-in">
             <h2 className="font-display text-4xl font-extrabold text-center">{t('settingsTitle')}</h2>
             
             {currentUser && (
-                <GlassCard className="p-6 space-y-4">
-                    <h3 className="font-bold text-lg text-gray-300">{t('userProfile')}</h3>
+                <Card className="p-6 space-y-4">
+                    <h3 className="font-bold text-lg text-[var(--text-secondary)]">{t('userProfile')}</h3>
                     <div className="flex items-center justify-between">
                         <p>{t('loggedInAs')} <span className="font-bold text-[var(--accent-1)]">{currentUser.name}</span></p>
                         <button onClick={onSwitchUser} className="px-4 py-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold">{t('switchUser')}</button>
                     </div>
-                </GlassCard>
+                </Card>
             )}
 
-            <GlassCard className="p-6 space-y-4">
-                <h3 className="font-bold text-lg text-gray-300">{t('rates')}</h3>
+            <Card className="p-6 space-y-4">
+                <h3 className="font-bold text-lg text-[var(--text-secondary)]">{t('rates')}</h3>
                  <div>
-                    <label htmlFor="hourlyWage" className="text-sm text-gray-400">{t('hourlyWage')}</label>
+                    <label htmlFor="hourlyWage" className="text-sm text-[var(--text-secondary)]">{t('hourlyWage')}</label>
                     <input
                         id="hourlyWage"
-                        type="number"
-                        value={hourlyWage}
-                        onChange={(e) => setHourlyWage(Number(e.target.value))}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                        type="text"
+                        inputMode="decimal"
+                        value={localHourlyWage}
+                        onChange={(e) => setLocalHourlyWage(e.target.value)}
+                        onBlur={() => handleBlur(localHourlyWage, setHourlyWage, setLocalHourlyWage, hourlyWage)}
+                        className="custom-input mt-1"
                     />
                 </div>
                  <div>
-                    <label htmlFor="panelRate" className="text-sm text-gray-400">{t('ratePerPanel')}</label>
+                    <label htmlFor="panelRate" className="text-sm text-[var(--text-secondary)]">{t('ratePerPanel')}</label>
                     <input
                         id="panelRate"
-                        type="number"
-                        value={panelRate}
-                        onChange={(e) => setPanelRate(Number(e.target.value))}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                        type="text"
+                        inputMode="decimal"
+                        value={localPanelRate}
+                        onChange={(e) => setLocalPanelRate(e.target.value)}
+                        onBlur={() => handleBlur(localPanelRate, setPanelRate, setLocalPanelRate, panelRate)}
+                        className="custom-input mt-1"
                     />
                 </div>
                  <div>
-                    <label htmlFor="currency" className="text-sm text-gray-400">{t('currencySymbol')}</label>
+                    <label htmlFor="currency" className="text-sm text-[var(--text-secondary)]">{t('currencySymbol')}</label>
                     <input
                         id="currency"
                         type="text"
                         value={currency}
                         onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                        className="custom-input mt-1"
                     />
                 </div>
-            </GlassCard>
+            </Card>
             
-            <GlassCard className="p-6 space-y-4">
-                <h3 className="font-bold text-lg text-gray-300">{t('language')}</h3>
+            <Card className="p-6 space-y-4">
+                <h3 className="font-bold text-lg text-[var(--text-secondary)]">{t('language')}</h3>
                 <div className="flex gap-4">
                     <button onClick={() => setLanguage('en')} className={`flex-1 p-3 rounded-full font-semibold transition-colors ${language === 'en' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'}`}>English</button>
                     <button onClick={() => setLanguage('cs')} className={`flex-1 p-3 rounded-full font-semibold transition-colors ${language === 'cs' ? 'bg-white/20' : 'bg-white/5 hover:bg-white/10'}`}>Čeština</button>
                 </div>
-            </GlassCard>
+            </Card>
 
-             <GlassCard className="p-6 space-y-4">
-                 <h3 className="font-bold text-lg text-gray-300">{t('dataManagement')}</h3>
+             <Card className="p-6 space-y-4">
+                 <h3 className="font-bold text-lg text-[var(--text-secondary)]">{t('dataManagement')}</h3>
                  <div className="flex gap-4">
                      <button onClick={onExport} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold">{t('exportData')}</button>
                      <button onClick={() => importRef.current?.click()} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold">{t('importData')}</button>
                      <input type="file" ref={importRef} onChange={onImport} accept=".json" className="hidden" />
                  </div>
-            </GlassCard>
+            </Card>
 
-            <GlassCard className="p-6 space-y-4 border-red-500/50">
+            <Card className="p-6 space-y-4 border-red-500/50">
                  <h3 className="font-bold text-lg text-red-400">{t('dangerZone')}</h3>
-                 <p className="text-sm text-gray-400">{t('dangerZoneDesc')}</p>
+                 <p className="text-sm text-[var(--text-secondary)]">{t('dangerZoneDesc')}</p>
                  <button onClick={onReset} className="w-full p-3 bg-red-500/20 text-red-400 rounded-full hover:bg-red-500/40 transition-colors font-bold">
                     {t('resetAllData')}
                 </button>
-            </GlassCard>
+            </Card>
         </div>
     );
 };
@@ -551,6 +578,39 @@ export const UserSelectionScreen: React.FC<UserSelectionScreenProps> = ({ users,
     const [newUserName, setNewUserName] = useState('');
     const [tapCount, setTapCount] = useState(0);
     const tapTimeout = useRef<number | null>(null);
+    const parallaxRef = useRef<HTMLDivElement>(null);
+
+
+    useEffect(() => {
+        const parallaxContainer = parallaxRef.current;
+        if (!parallaxContainer) return;
+
+        const handleMouseMove = (e: MouseEvent) => {
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+            const moveX = (clientX - innerWidth / 2) / (innerWidth / 2) * -10; // -10 to 10px range
+            const moveY = (clientY - innerHeight / 2) / (innerHeight / 2) * -10;
+            parallaxContainer.style.transform = `translateX(${moveX}px) translateY(${moveY}px) perspective(1000px)`;
+        };
+        
+        const handleDeviceOrientation = (e: DeviceOrientationEvent) => {
+            const { gamma, beta } = e; // gamma: left-to-right tilt, beta: front-to-back tilt
+            if (gamma === null || beta === null) return;
+            const moveX = (gamma / 45) * -15; // Max 15px move
+            const moveY = (beta / 90) * -15;
+            parallaxContainer.style.transform = `translateX(${moveX}px) translateY(${moveY}px) perspective(1000px)`;
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener('deviceorientation', handleDeviceOrientation);
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('deviceorientation', handleDeviceOrientation);
+        };
+    }, []);
 
 
     const handleCreate = () => {
@@ -579,14 +639,14 @@ export const UserSelectionScreen: React.FC<UserSelectionScreenProps> = ({ users,
     }
 
     return (
-        <div className="w-full h-full bg-gradient-to-b from-[var(--primary)] to-[var(--secondary)] flex flex-col items-center justify-center p-8 text-white">
-            <div onClick={handleIconTap} className="cursor-pointer">
-                <AppIcon className="w-32 h-32 mb-8" />
+        <div className="w-full h-full animated-gradient-bg flex flex-col items-center justify-center p-8 text-white overflow-hidden">
+            <div ref={parallaxRef} style={{ transition: 'transform 0.1s linear' }}>
+                <div onClick={handleIconTap} className="cursor-pointer mb-8 animate-logo-float">
+                    <MSTLogo/>
+                </div>
             </div>
-            <h1 className="font-display text-4xl font-extrabold mb-2">{t('welcome')}</h1>
-            <h2 className="font-display text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)] mb-12">{t('appName')}</h2>
 
-            <GlassCard className="w-full max-w-sm p-6 space-y-4">
+            <Card className="w-full max-w-sm p-6 space-y-4 bg-black/20 backdrop-blur-sm border border-white/10">
                 <h3 className="text-xl font-bold text-center">{t('selectOrCreateProfile')}</h3>
                 <div className="space-y-3 max-h-40 overflow-y-auto">
                     {users.filter(u => !u.isAdmin).map(user => (
@@ -596,19 +656,19 @@ export const UserSelectionScreen: React.FC<UserSelectionScreenProps> = ({ users,
                     ))}
                 </div>
 
-                <div className="pt-4 border-t border-white/10">
+                <div className="pt-4 border-t border-[var(--border-color)]">
                     <input
                         type="text"
                         value={newUserName}
                         onChange={(e) => setNewUserName(e.target.value)}
                         placeholder={t('enterNewUserName')}
-                        className="w-full p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                        className="custom-input"
                     />
                     <FloatingButton onClick={handleCreate} ariaLabel={t('createUser')} className="w-full h-12 mt-4">
-                        <span className="font-bold">{t('createUser')}</span>
+                        <span>{t('createUser')}</span>
                     </FloatingButton>
                 </div>
-            </GlassCard>
+            </Card>
         </div>
     );
 }
@@ -668,7 +728,7 @@ export const WorkLogScreen: React.FC<WorkLogScreenProps> = ({ entries, installat
     };
 
     return (
-        <div className="p-4 space-y-4 text-white relative h-full flex flex-col">
+        <div className="p-4 space-y-4 text-white relative h-full flex flex-col fade-in">
             <h2 className="font-display text-4xl font-extrabold text-center px-2">{t('historyTitle')}</h2>
             <div className="flex-grow overflow-y-auto pr-2 space-y-6">
                 {entries.length === 0 ? (
@@ -679,33 +739,33 @@ export const WorkLogScreen: React.FC<WorkLogScreenProps> = ({ entries, installat
                 ) : (
                     Object.entries(groupedEntries).map(([dateKey, entriesOnDate]) => (
                         <div key={dateKey}>
-                            <h3 className="font-bold text-gray-400 mb-2 px-4">{formatDateHeader(dateKey)}</h3>
+                            <h3 className="font-bold text-[var(--text-secondary)] mb-2 px-4">{formatDateHeader(dateKey)}</h3>
                             <div className="space-y-3">
                                 {entriesOnDate.map(entry => {
                                     const installation = installationMap.get(entry.installationId);
                                     const isTimeEntry = entry.type === 'hourly';
                                     return (
                                         <button key={entry.id} className="w-full text-left" onClick={() => { onHapticTrigger('light'); onViewDetails(entry); }}>
-                                            <GlassCard className="p-4 flex items-center gap-4 hover:bg-white/5 transition-colors">
+                                            <Card className="p-4 flex items-center gap-4 hover:bg-white/5 transition-colors">
                                                 <div className="w-2 h-10 rounded-full" style={{ backgroundColor: installation?.color || '#888' }}></div>
-                                                <div className="flex items-center gap-3">
+                                                <div className="flex items-center gap-3 text-[var(--text-secondary)]">
                                                     {isTimeEntry ? <TimerIcon /> : <PanelIcon />}
                                                 </div>
                                                 <div className="flex-grow">
                                                     <p className="font-bold">{installation?.name || t('unknownInstallation')}</p>
                                                     {isTimeEntry && (
-                                                        <p className="text-sm text-gray-400">
+                                                        <p className="text-sm text-[var(--text-secondary)]">
                                                             {formatTime(entry.startTime, language)} - {entry.endTime ? formatTime(entry.endTime, language) : '...'}
                                                         </p>
                                                     )}
                                                 </div>
                                                 <div className="text-right flex items-center gap-2">
-                                                    {entry.notes && entry.notes.replace(/<[^>]*>?/gm, '').trim() !== '' && <NoteIcon className="w-4 h-4 text-gray-400"/>}
+                                                    {entry.notes && entry.notes.replace(/<[^>]*>?/gm, '').trim() !== '' && <NoteIcon className="w-4 h-4 text-[var(--text-secondary)]"/>}
                                                     <p className="font-bold font-timer text-lg">
                                                         {isTimeEntry ? formatDuration(entry.duration) : `${entry.count} ${t('panels')}`}
                                                     </p>
                                                 </div>
-                                            </GlassCard>
+                                            </Card>
                                         </button>
                                     );
                                 })}
@@ -745,6 +805,14 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
     const [endTime, setEndTime] = useState(toISOTime(entry?.endTime || now));
     const [notes, setNotes] = useState(entry?.notes || '');
     const notesEditorRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // Set the initial content of the editor only when the entry changes.
+        // This prevents React from overwriting user input on every re-render.
+        if (notesEditorRef.current) {
+            notesEditorRef.current.innerHTML = entry?.notes || '';
+        }
+    }, [entry]);
     
     const handleSave = () => {
         if (!installationId) {
@@ -773,17 +841,17 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
     };
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <GlassCard className="w-full max-w-sm p-6 space-y-6 text-white">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-sm p-6 space-y-6 text-white">
                 <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editTimeEntry') : t('newTimeEntry')}</h2>
                 
                 <div>
-                    <label htmlFor="entryInstallation" className="text-sm text-gray-400">{t('installation')}</label>
+                    <label htmlFor="entryInstallation" className="text-sm text-[var(--text-secondary)]">{t('installation')}</label>
                     <select
                         id="entryInstallation"
                         value={installationId}
                         onChange={(e) => setInstallationId(e.target.value)}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)] appearance-none"
+                        className="custom-input mt-1"
                     >
                         <option value="" disabled>{t('selectInstallation')}</option>
                         {installations.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -792,29 +860,29 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="startDate" className="text-sm text-gray-400">{t('startDate')}</label>
-                        <input id="startDate" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
+                        <label htmlFor="startDate" className="text-sm text-[var(--text-secondary)]">{t('startDate')}</label>
+                        <input id="startDate" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="custom-input mt-1"/>
                     </div>
                      <div>
-                        <label htmlFor="startTime" className="text-sm text-gray-400">{t('startTime')}</label>
-                        <input id="startTime" type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
+                        <label htmlFor="startTime" className="text-sm text-[var(--text-secondary)]">{t('startTime')}</label>
+                        <input id="startTime" type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="custom-input mt-1"/>
                     </div>
                 </div>
                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <label htmlFor="endDate" className="text-sm text-gray-400">{t('endDate')}</label>
-                        <input id="endDate" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
+                        <label htmlFor="endDate" className="text-sm text-[var(--text-secondary)]">{t('endDate')}</label>
+                        <input id="endDate" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="custom-input mt-1"/>
                     </div>
                      <div>
-                        <label htmlFor="endTime" className="text-sm text-gray-400">{t('endTime')}</label>
-                        <input id="endTime" type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
+                        <label htmlFor="endTime" className="text-sm text-[var(--text-secondary)]">{t('endTime')}</label>
+                        <input id="endTime" type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="custom-input mt-1"/>
                     </div>
                 </div>
                 
                 <div>
-                    <label className="text-sm text-gray-400">{t('notes')}</label>
-                    <div className="mt-1 border border-white/10 rounded-lg">
-                        <div className="flex gap-1 p-2 bg-white/5 rounded-t-lg border-b border-white/10">
+                    <label className="text-sm text-[var(--text-secondary)]">{t('notes')}</label>
+                    <div className="mt-1 border border-[var(--border-color)] rounded-xl">
+                        <div className="flex gap-1 p-2 bg-white/5 rounded-t-xl border-b border-[var(--border-color)]">
                             <button type="button" onClick={() => execCmd('bold')} className="font-bold w-8 h-8 rounded hover:bg-white/20">B</button>
                             <button type="button" onClick={() => execCmd('italic')} className="italic w-8 h-8 rounded hover:bg-white/20">I</button>
                             <button type="button" onClick={() => execCmd('underline')} className="underline w-8 h-8 rounded hover:bg-white/20">U</button>
@@ -823,7 +891,6 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
                             ref={notesEditorRef}
                             contentEditable
                             onInput={handleNotesInput}
-                            dangerouslySetInnerHTML={{ __html: notes }}
                             className="w-full min-h-[100px] p-3 focus:outline-none"
                             aria-label={t('notes')}
                         />
@@ -834,10 +901,10 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
                 <div className="flex gap-4">
                      <button onClick={onClose} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">{t('cancel')}</button>
                      <FloatingButton onClick={handleSave} ariaLabel={t('save')} className="flex-1 h-12">
-                        <span className="font-bold">{t('save')}</span>
+                        <span>{t('save')}</span>
                      </FloatingButton>
                 </div>
-            </GlassCard>
+            </Card>
         </div>
     );
 };
@@ -856,17 +923,26 @@ export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installatio
 
     const [installationId, setInstallationId] = useState(entry?.installationId || installations[0]?.id || '');
     const [date, setDate] = useState(toISODate(entry?.date || now));
-    const [count, setCount] = useState(entry?.count || 0);
+    const [countStr, setCountStr] = useState(String(entry?.count || ''));
     const [notes, setNotes] = useState(entry?.notes || '');
     const notesEditorRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // Set the initial content of the editor only when the entry changes.
+        // This prevents React from overwriting user input on every re-render.
+        if (notesEditorRef.current) {
+            notesEditorRef.current.innerHTML = entry?.notes || '';
+        }
+    }, [entry]);
 
     const handleSave = () => {
         if (!installationId) {
             alert(t('selectInstallation'));
             return;
         }
-        if (count <= 0) {
-            alert('Please enter a valid panel count.'); // Not translated for simplicity, can be added
+        const count = parseInt(countStr, 10);
+        if (isNaN(count) || count <= 0) {
+            alert(t('invalidPanelCount'));
             return;
         }
         
@@ -885,40 +961,46 @@ export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installatio
 
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <GlassCard className="w-full max-w-sm p-6 space-y-6 text-white">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-sm p-6 space-y-6 text-white">
                 <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editPanelLog') : t('newPanelLog')}</h2>
                 
                 <div>
-                    <label htmlFor="panelLogInstallation" className="text-sm text-gray-400">{t('installation')}</label>
+                    <label htmlFor="panelLogInstallation" className="text-sm text-[var(--text-secondary)]">{t('installation')}</label>
                     <select
                         id="panelLogInstallation"
                         value={installationId}
                         onChange={(e) => setInstallationId(e.target.value)}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)] appearance-none"
+                        className="custom-input mt-1"
                     >
                         <option value="" disabled>{t('selectInstallation')}</option>
                         {installations.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                 </div>
                 <div>
-                    <label htmlFor="panelLogDate" className="text-sm text-gray-400">{t('date')}</label>
-                    <input id="panelLogDate" type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"/>
+                    <label htmlFor="panelLogDate" className="text-sm text-[var(--text-secondary)]">{t('date')}</label>
+                    <input id="panelLogDate" type="date" value={date} onChange={e => setDate(e.target.value)} className="custom-input mt-1"/>
                 </div>
                 <div>
-                    <label htmlFor="panelCount" className="text-sm text-gray-400">{t('panelsInstalled')}</label>
+                    <label htmlFor="panelCount" className="text-sm text-[var(--text-secondary)]">{t('panelsInstalled')}</label>
                     <input
                         id="panelCount"
-                        type="number"
-                        value={count}
-                        onChange={(e) => setCount(Number(e.target.value))}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                        type="text"
+                        inputMode="numeric"
+                        value={countStr}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            if (/^\d*$/.test(val)) {
+                                setCountStr(val);
+                            }
+                        }}
+                        className="custom-input mt-1"
                     />
                 </div>
                  <div>
-                    <label className="text-sm text-gray-400">{t('notes')}</label>
-                    <div className="mt-1 border border-white/10 rounded-lg">
-                        <div className="flex gap-1 p-2 bg-white/5 rounded-t-lg border-b border-white/10">
+                    <label className="text-sm text-[var(--text-secondary)]">{t('notes')}</label>
+                    <div className="mt-1 border border-[var(--border-color)] rounded-xl">
+                        <div className="flex gap-1 p-2 bg-white/5 rounded-t-xl border-b border-[var(--border-color)]">
                             <button type="button" onClick={() => execCmd('bold')} className="font-bold w-8 h-8 rounded hover:bg-white/20">B</button>
                             <button type="button" onClick={() => execCmd('italic')} className="italic w-8 h-8 rounded hover:bg-white/20">I</button>
                             <button type="button" onClick={() => execCmd('underline')} className="underline w-8 h-8 rounded hover:bg-white/20">U</button>
@@ -927,7 +1009,6 @@ export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installatio
                             ref={notesEditorRef}
                             contentEditable
                             onInput={handleNotesInput}
-                            dangerouslySetInnerHTML={{ __html: notes }}
                             className="w-full min-h-[100px] p-3 focus:outline-none"
                             aria-label={t('notes')}
                         />
@@ -936,10 +1017,10 @@ export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installatio
                 <div className="flex gap-4">
                      <button onClick={onClose} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">{t('cancel')}</button>
                      <FloatingButton onClick={handleSave} ariaLabel={t('save')} className="flex-1 h-12">
-                        <span className="font-bold">{t('save')}</span>
+                        <span>{t('save')}</span>
                      </FloatingButton>
                 </div>
-            </GlassCard>
+            </Card>
         </div>
     );
 };
@@ -952,15 +1033,15 @@ interface AddEntryChoiceModalProps {
 
 export const AddEntryChoiceModal: React.FC<AddEntryChoiceModalProps> = ({ onClose, onSelect, t }) => {
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <GlassCard className="w-full max-w-sm p-6 space-y-6 text-white">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-sm p-6 space-y-6 text-white">
                  <h2 className="font-display text-2xl font-bold text-center">{t('addEntryChoiceTitle')}</h2>
                  <div className="flex flex-col gap-4">
                     <button onClick={() => onSelect('time')} className="w-full p-4 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold flex items-center justify-center gap-3"><TimerIcon/> {t('addTimeEntry')}</button>
                     <button onClick={() => onSelect('panel')} className="w-full p-4 bg-white/10 rounded-full hover:bg-white/20 transition-colors font-semibold flex items-center justify-center gap-3"><PanelIcon/> {t('addPanelLog')}</button>
                  </div>
                  <button onClick={onClose} className="w-full p-3 bg-white/5 rounded-full hover:bg-white/10 transition-colors">{t('cancel')}</button>
-            </GlassCard>
+            </Card>
         </div>
     )
 };
@@ -979,27 +1060,27 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onClose, onLog
     }
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <GlassCard className="w-full max-w-sm p-6 space-y-6 text-white">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-sm p-6 space-y-6 text-white">
                  <h2 className="font-display text-2xl font-bold text-center">{t('adminLogin')}</h2>
                  <div>
-                    <label htmlFor="adminPassword" className="text-sm text-gray-400">{t('password')}</label>
+                    <label htmlFor="adminPassword" className="text-sm text-[var(--text-secondary)]">{t('password')}</label>
                     <input
                         id="adminPassword"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
-                        className="w-full mt-1 p-3 bg-white/5 rounded-lg border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent-1)]"
+                        className="custom-input mt-1"
                     />
                 </div>
                  <div className="flex gap-4">
                      <button onClick={onClose} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">{t('cancel')}</button>
                      <FloatingButton onClick={handleLogin} ariaLabel={t('login')} className="flex-1 h-12">
-                        <span className="font-bold">{t('login')}</span>
+                        <span>{t('login')}</span>
                      </FloatingButton>
                 </div>
-            </GlassCard>
+            </Card>
         </div>
     )
 }
@@ -1019,25 +1100,25 @@ export const WorkEntryDetailModal: React.FC<WorkEntryDetailModalProps> = ({ entr
     const isTimeEntry = entry.type === 'hourly';
 
     return (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <GlassCard className="w-full max-w-sm p-6 space-y-4 text-white">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-sm p-6 space-y-4 text-white">
                 <h2 className="font-display text-2xl font-bold text-center">{t('workEntryDetails')}</h2>
 
                 <div className="space-y-2 text-sm">
-                    <p><span className="font-semibold text-gray-400">{t('installation')}:</span> {installation?.name || t('unknownInstallation')}</p>
+                    <p><span className="font-semibold text-[var(--text-secondary)]">{t('installation')}:</span> {installation?.name || t('unknownInstallation')}</p>
                     {isTimeEntry ? (
                        <>
-                         <p><span className="font-semibold text-gray-400">{t('duration')}:</span> {formatDuration(entry.duration)}</p>
-                         <p><span className="font-semibold text-gray-400">{t('period')}:</span> {formatTime(entry.startTime, language)} - {entry.endTime ? formatTime(entry.endTime, language) : '...'}</p>
+                         <p><span className="font-semibold text-[var(--text-secondary)]">{t('duration')}:</span> {formatDuration(entry.duration)}</p>
+                         <p><span className="font-semibold text-[var(--text-secondary)]">{t('period')}:</span> {formatTime(entry.startTime, language)} - {entry.endTime ? formatTime(entry.endTime, language) : '...'}</p>
                        </>
                     ) : (
-                         <p><span className="font-semibold text-gray-400">{t('panelsInstalled')}:</span> {entry.count}</p>
+                         <p><span className="font-semibold text-[var(--text-secondary)]">{t('panelsInstalled')}:</span> {entry.count}</p>
                     )}
-                     <p><span className="font-semibold text-gray-400">{t('date')}:</span> {new Date(isTimeEntry ? entry.startTime : entry.date).toLocaleDateString(language === 'cs' ? 'cs-CZ' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                     <p><span className="font-semibold text-[var(--text-secondary)]">{t('date')}:</span> {new Date(isTimeEntry ? entry.startTime : entry.date).toLocaleDateString(language === 'cs' ? 'cs-CZ' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                 </div>
 
                 <div className="space-y-2">
-                    <h3 className="font-bold text-lg text-gray-300 border-b border-white/10 pb-2 mb-2">{t('notes')}</h3>
+                    <h3 className="font-bold text-lg text-[var(--text-secondary)] border-b border-[var(--border-color)] pb-2 mb-2">{t('notes')}</h3>
                     {entry.notes ? (
                         <div className="text-sm text-gray-300 max-h-40 overflow-y-auto" dangerouslySetInnerHTML={{ __html: entry.notes }} />
                     ) : (
@@ -1054,7 +1135,7 @@ export const WorkEntryDetailModal: React.FC<WorkEntryDetailModalProps> = ({ entr
                         </div>
                     )}
                 </div>
-            </GlassCard>
+            </Card>
         </div>
     )
 }

@@ -4,13 +4,13 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/icons/icon-192x192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Solar Work Report</title>
+    <title>MST</title>
 
     <!-- PWA Meta Tags for iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Solar Work">
-    <meta name="theme-color" content="#0d1b2a">
+    <meta name="apple-mobile-web-app-title" content="MST">
+    <meta name="theme-color" content="#121212">
     
     <!-- App Icons -->
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
@@ -28,14 +28,55 @@
     
     <style>
         :root {
-            --primary: #0d1b2a;
-            --secondary: #1b263b;
-            --accent-1: #FFC300; /* Solar Yellow */
-            --accent-2: #FF5733; /* Solar Orange */
-            --accent-3: #415a77; /* Calming Blue */
-            --glass: rgba(27, 38, 59, 0.6);
-            --glow: rgba(255, 195, 0, 0.2);
-            --soft-glow: rgba(255, 195, 0, 0.1);
+            --primary: #121212;
+            --secondary: #1E1E1E;
+            --accent-1: #d8ff00; /* Cyber Lime */
+            --accent-2: #ff00c1; /* Future Magenta */
+            --accent-3: #00f5ff; /* Cyan Pulse */
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --glow: rgba(216, 255, 0, 0.15);
+            --soft-glow: rgba(216, 255, 0, 0.05);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin-slow { 
+            from { transform: rotate(0deg); } 
+            to { transform: rotate(360deg); } 
+        }
+
+        @keyframes logo-float {
+            0%, 100% { transform: translateY(0); filter: drop-shadow(0 5px 15px var(--glow)); }
+            50% { transform: translateY(-10px); filter: drop-shadow(0 15px 25px var(--glow)); }
+        }
+
+        @keyframes gradient-pan {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .animated-gradient-bg {
+            background: linear-gradient(-45deg, #0d1218, #1a222c, #10161d, #1e2832);
+            background-size: 400% 400%;
+            animation: gradient-pan 20s ease infinite;
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 20s linear infinite;
+        }
+        
+        .animate-logo-float {
+            animation: logo-float 6s ease-in-out infinite;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
         }
         
         /* Apply safe area insets */
@@ -45,15 +86,59 @@
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
             background-color: var(--primary);
+            color: var(--text-primary);
             font-family: 'Manrope', 'SF Pro Text', sans-serif;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-3);
         }
 
         .font-display {
              font-family: 'Manrope', 'SF Pro Display', sans-serif;
+             font-weight: 800; /* Bolder headings */
         }
 
         .font-timer {
              font-family: 'Roboto Mono', 'SF Mono', monospace;
+        }
+
+        /* Custom input/select styles */
+        .custom-input {
+            background-color: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            transition: all 0.2s ease-in-out;
+            color: var(--text-primary);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        .custom-input:focus {
+            outline: none;
+            border-color: var(--accent-1);
+            box-shadow: 0 0 10px var(--glow);
+        }
+        select.custom-input {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23a0a0a0' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
         }
     </style>
 <script type="importmap">
@@ -68,7 +153,7 @@
 }
 </script>
 </head>
-<body class="bg-[#0d1b2a]">
+<body class="bg-[#121212]">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

@@ -8,8 +8,7 @@ export const translations = {
     settings: 'Settings',
 
     // User Selection
-    welcome: 'Welcome to',
-    appName: 'Solar Work Report',
+    appName: 'MST',
     selectOrCreateProfile: 'Select or create a profile',
     enterNewUserName: 'Enter new user name...',
     createUser: 'Create User',
@@ -76,6 +75,7 @@ export const translations = {
     editPanelLog: 'Edit Panel Log',
     date: 'Date',
     panelsInstalled: 'Panels Installed',
+    invalidPanelCount: 'Please enter a valid panel count.',
 
     // Stats Screen
     statistics: 'Statistics',
@@ -141,8 +141,7 @@ export const translations = {
     settings: 'Nastavení',
 
     // User Selection
-    welcome: 'Vítejte v',
-    appName: 'Solar Work Report',
+    appName: 'MST',
     selectOrCreateProfile: 'Vyberte nebo vytvořte profil',
     enterNewUserName: 'Zadejte jméno nového uživatele...',
     createUser: 'Vytvořit uživatele',
@@ -209,6 +208,7 @@ export const translations = {
     editPanelLog: 'Upravit záznam panelů',
     date: 'Datum',
     panelsInstalled: 'Instalovaných panelů',
+    invalidPanelCount: 'Zadejte prosím platný počet panelů.',
 
     // Stats Screen
     statistics: 'Statistiky',

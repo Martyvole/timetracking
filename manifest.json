@@ -1,6 +1,6 @@
 {
-  "short_name": "SolarWork",
-  "name": "Solar Work Report",
+  "short_name": "MST",
+  "name": "MST",
   "description": "A PWA for tracking work on solar power plant installations.",
   "icons": [
     {

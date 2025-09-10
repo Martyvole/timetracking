@@ -47,7 +47,7 @@ export const useHapticFeedback = () => {
 
 // --- Translation Hook ---
 export const useTranslation = () => {
-    const [language, setLanguage] = useLocalStorage<'en' | 'cs'>('flowtime_language', 'en');
+    const [language, setLanguage] = useLocalStorage<'en' | 'cs'>('flowtime_language', 'cs');
 
     const t = useCallback((key: keyof typeof translations.en, ...args: (string | number)[]) => {
         let translation = translations[language][key] || translations.en[key] || key;

@@ -448,7 +448,7 @@ function App() {
       case 'timer':
       default:
         return (
-            <div className="flex flex-col items-center justify-center h-full gap-8">
+            <div className="flex flex-col items-center justify-center h-full gap-8 fade-in">
                 <TimerDisplay 
                     elapsedTime={elapsedTime} 
                     earnings={earnings} 
@@ -498,7 +498,7 @@ function App() {
   }
 
   return (
-    <div className="h-[100dvh] w-full text-white bg-gradient-to-b from-[var(--primary)] to-[var(--secondary)] overflow-hidden flex flex-col">
+    <div className="h-[100dvh] w-full text-white bg-[var(--primary)] overflow-hidden flex flex-col">
         {!isOnline && <OfflineIndicator t={t} />}
         <main className="flex-grow overflow-y-auto pb-28">
             {renderScreen()}
