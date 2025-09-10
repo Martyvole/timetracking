@@ -12,11 +12,19 @@ export interface Installation {
   userId: string;
 }
 
+export interface Task {
+  id: string;
+  installationId: string;
+  userId: string;
+  name: string;
+}
+
 // Base interface for all work entries
 interface BaseEntry {
   id: string;
   installationId: string;
   userId: string;
+  taskId?: string;
   notes?: string;
   photo?: string; // base64 encoded string
 }

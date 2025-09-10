@@ -23,6 +23,7 @@ export const translations = {
     offline: 'Offline',
     save: 'Save',
     cancel: 'Cancel',
+    optional: 'optional',
 
     // Timer Screen
     noInstallationSelected: 'No Installation Selected',
@@ -91,6 +92,17 @@ export const translations = {
     generatingReport: 'Generating Report...',
     weeklySummary: 'Weekly AI Summary',
     aiReportError: 'Could not generate AI report. Please try again later.',
+
+    // Task Management
+    tasks: 'Tasks',
+    task: 'Task',
+    manageTasks: 'Manage Tasks',
+    noTaskAssigned: 'No task assigned',
+    noTasksForInstallation: 'No tasks created for this installation yet.',
+    newTaskName: 'New task name...',
+    addTask: 'Add Task',
+    deleteTaskConfirm: 'This task is assigned to {0} work logs. Deleting it will unassign them. Are you sure you want to continue?',
+    deleteTaskConfirmNoEntries: 'Are you sure you want to delete this task?',
     
     // Installations Screen
     installationsTitle: 'Installations',
@@ -129,7 +141,6 @@ export const translations = {
     importSuccess: 'Data imported successfully!',
     importError: 'Error importing data. Please check the file format.',
     resetConfirm: 'DANGER: Are you sure you want to delete all installations and logs for {0}? This is irreversible.',
-    // FIX: Add missing translation key for reset success message.
     resetSuccess: 'All data for {0} has been successfully reset.',
   },
   cs: {
@@ -156,6 +167,7 @@ export const translations = {
     offline: 'Offline',
     save: 'Uložit',
     cancel: 'Zrušit',
+    optional: 'volitelné',
 
     // Timer Screen
     noInstallationSelected: 'Není vybrána instalace',
@@ -224,6 +236,17 @@ export const translations = {
     generatingReport: 'Generuji report...',
     weeklySummary: 'Týdenní AI souhrn',
     aiReportError: 'Nepodařilo se vygenerovat AI report. Zkuste to prosím později.',
+
+    // Task Management
+    tasks: 'Úkoly',
+    task: 'Úkol',
+    manageTasks: 'Spravovat úkoly',
+    noTaskAssigned: 'Není přiřazen žádný úkol',
+    noTasksForInstallation: 'Pro tuto instalaci zatím nebyly vytvořeny žádné úkoly.',
+    newTaskName: 'Název nového úkolu...',
+    addTask: 'Přidat úkol',
+    deleteTaskConfirm: 'Tento úkol je přiřazen k {0} pracovním záznamům. Jeho smazáním je odřadíte. Opravdu chcete pokračovat?',
+    deleteTaskConfirmNoEntries: 'Opravdu chcete smazat tento úkol?',
     
     // Installations Screen
     installationsTitle: 'Instalace',
@@ -262,7 +285,6 @@ export const translations = {
     importSuccess: 'Data byla úspěšně importována!',
     importError: 'Chyba při importu dat. Zkontrolujte prosím formát souboru.',
     resetConfirm: 'POZOR: Opravdu chcete smazat všechny instalace a záznamy pro uživatele {0}? Tato akce je nevratná.',
-    // FIX: Add missing translation key for reset success message.
     resetSuccess: 'Všechna data pro uživatele {0} byla úspěšně resetována.',
   }
 };

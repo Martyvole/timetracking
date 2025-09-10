@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import type { Installation, WorkEntry, TimeEntry, PanelEntry, Screen, User } from './types';
+import type { Installation, WorkEntry, TimeEntry, PanelEntry, Screen, User, Task } from './types';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Rectangle } from 'recharts';
 
 // --- Icon Components ---
@@ -57,6 +57,7 @@ export const EditIcon: React.FC = () => <Icon><path d="m16.262 3.126 4.612 4.612
 export const TrashIcon: React.FC = () => <Icon><path d="M4 6h16v2H4V6Zm2 14v-9h12v9H6Zm2-7h2v5H8v-5Zm4 0h2v5h-2v-5Zm-6-5h10V4H8v2Z"/></Icon>;
 export const PanelIcon: React.FC = () => <Icon><path d="M2 2h20v20H2V2zm2 2v3h16V4H4zm0 5v4h7V9H4zm9 0v4h7V9h-7zm-9 6v4h7v-4H4zm9 0v4h7v-4h-7z"/></Icon>;
 export const NoteIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className}><path d="M4 2.5A1.5 1.5 0 0 0 2.5 4v16A1.5 1.5 0 0 0 4 21.5h16a1.5 1.5 0 0 0 1.5-1.5V4A1.5 1.5 0 0 0 20 2.5H4ZM4 4h16v16H4V4Zm3 3.5h10v2H7v-2Zm0 4h10v2H7v-2Zm0 4h6v2H7v-2Z"/></Icon>;
+export const TaskIcon: React.FC<{ className?: string }> = ({ className }) => <Icon className={className}><path d="M3.75 3h16.5c.966 0 1.75.784 1.75 1.75v14.5A1.75 1.75 0 0 1 20.25 21H3.75A1.75 1.75 0 0 1 2 19.25V4.75C2 3.784 2.784 3 3.75 3ZM3.5 4.75v14.5c0 .138.112.25.25.25h16.5a.25.25 0 0 0 .25-.25V4.75a.25.25 0 0 0-.25-.25H3.75a.25.25 0 0 0-.25.25Zm4-1.25a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5Zm8 0a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5ZM8 9.75a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 8 9.75Zm.75 3.25a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z"/></Icon>;
 
 
 // --- UI Components ---
@@ -330,12 +331,13 @@ interface InstallationListProps {
     onCreateInstallation: () => void;
     onEditInstallation: (installation: Installation) => void;
     onDeleteInstallation: (installationId: string) => void;
+    onManageTasks: (installation: Installation) => void;
     onHapticTrigger: (type: 'light' | 'medium' | 'error') => void;
     t: (key: string) => string;
     isReadOnly?: boolean;
 }
 
-export const InstallationList: React.FC<InstallationListProps> = ({ installations, onSelectInstallation, activeInstallationId, onCreateInstallation, onEditInstallation, onDeleteInstallation, onHapticTrigger, t, isReadOnly = false }) => {
+export const InstallationList: React.FC<InstallationListProps> = ({ installations, onSelectInstallation, activeInstallationId, onCreateInstallation, onEditInstallation, onDeleteInstallation, onManageTasks, onHapticTrigger, t, isReadOnly = false }) => {
     const [menuOpenFor, setMenuOpenFor] = useState<string | null>(null);
 
     const toggleMenu = (installationId: string) => {
@@ -361,9 +363,14 @@ export const InstallationList: React.FC<InstallationListProps> = ({ installation
                                 {activeInstallationId === p.id && <div className="w-2 h-2 rounded-full bg-[var(--accent-1)] animate-pulse ml-auto"></div>}
                             </button>
                             {!isReadOnly && (
-                                <button onClick={() => toggleMenu(p.id)} className="p-4 text-gray-400 hover:text-white">
-                                    <KebabMenuIcon />
-                                </button>
+                                <div className="flex">
+                                    <button onClick={() => onManageTasks(p)} className="p-4 text-gray-400 hover:text-white" aria-label={t('manageTasks')}>
+                                        <TaskIcon />
+                                    </button>
+                                    <button onClick={() => toggleMenu(p.id)} className="p-4 text-gray-400 hover:text-white" aria-label={t('edit') + ' or ' + t('delete')}>
+                                        <KebabMenuIcon />
+                                    </button>
+                                </div>
                             )}
                         </Card>
                         {menuOpenFor === p.id && (
@@ -760,6 +767,7 @@ export const WorkLogScreen: React.FC<WorkLogScreenProps> = ({ entries, installat
                                                     )}
                                                 </div>
                                                 <div className="text-right flex items-center gap-2">
+                                                    {entry.taskId && <TaskIcon className="w-4 h-4 text-[var(--text-secondary)]" />}
                                                     {entry.notes && entry.notes.replace(/<[^>]*>?/gm, '').trim() !== '' && <NoteIcon className="w-4 h-4 text-[var(--text-secondary)]"/>}
                                                     <p className="font-bold font-timer text-lg">
                                                         {isTimeEntry ? formatDuration(entry.duration) : `${entry.count} ${t('panels')}`}
@@ -786,15 +794,16 @@ export const WorkLogScreen: React.FC<WorkLogScreenProps> = ({ entries, installat
 interface TimeEntryModalProps {
     entry?: TimeEntry | null;
     installations: Installation[];
+    tasks: Task[];
     onClose: () => void;
-    onSave: (entryData: { installationId: string; startTime: number; endTime: number, notes?: string }) => void;
+    onSave: (entryData: { installationId: string; startTime: number; endTime: number, taskId?: string, notes?: string }) => void;
     t: (key: string) => string;
 }
 
 const toISODate = (timestamp: number) => new Date(timestamp).toISOString().split('T')[0];
 const toISOTime = (timestamp: number) => new Date(timestamp).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
 
-export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installations, onClose, onSave, t }) => {
+export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installations, tasks, onClose, onSave, t }) => {
     const isEditing = !!entry;
     const now = Date.now();
     
@@ -803,12 +812,20 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
     const [startTime, setStartTime] = useState(toISOTime(entry?.startTime || now));
     const [endDate, setEndDate] = useState(toISODate(entry?.endTime || now));
     const [endTime, setEndTime] = useState(toISOTime(entry?.endTime || now));
+    const [taskId, setTaskId] = useState(entry?.taskId || '');
     const [notes, setNotes] = useState(entry?.notes || '');
     const notesEditorRef = useRef<HTMLDivElement>(null);
 
+    const availableTasks = useMemo(() => tasks.filter(t => t.installationId === installationId), [tasks, installationId]);
+    
     useEffect(() => {
-        // Set the initial content of the editor only when the entry changes.
-        // This prevents React from overwriting user input on every re-render.
+        // Reset task if installation changes and task is no longer valid
+        if (!availableTasks.find(t => t.id === taskId)) {
+            setTaskId('');
+        }
+    }, [installationId, availableTasks, taskId]);
+
+    useEffect(() => {
         if (notesEditorRef.current) {
             notesEditorRef.current.innerHTML = entry?.notes || '';
         }
@@ -828,7 +845,7 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
             return;
         }
         
-        onSave({ installationId, startTime: startTimestamp, endTime: endTimestamp, notes });
+        onSave({ installationId, startTime: startTimestamp, endTime: endTimestamp, taskId: taskId || undefined, notes });
     };
 
     const handleNotesInput = (e: React.FormEvent<HTMLDivElement>) => {
@@ -842,7 +859,7 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
 
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <Card className="w-full max-w-sm p-6 space-y-6 text-white">
+            <Card className="w-full max-w-sm p-6 space-y-4 text-white overflow-y-auto max-h-[90vh]">
                 <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editTimeEntry') : t('newTimeEntry')}</h2>
                 
                 <div>
@@ -878,6 +895,20 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
                         <input id="endTime" type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="custom-input mt-1"/>
                     </div>
                 </div>
+
+                <div>
+                    <label htmlFor="entryTask" className="text-sm text-[var(--text-secondary)]">{t('task')} ({t('optional')})</label>
+                    <select
+                        id="entryTask"
+                        value={taskId}
+                        onChange={(e) => setTaskId(e.target.value)}
+                        className="custom-input mt-1"
+                        disabled={!installationId || availableTasks.length === 0}
+                    >
+                        <option value="">{t('noTaskAssigned')}</option>
+                        {availableTasks.map(task => <option key={task.id} value={task.id}>{task.name}</option>)}
+                    </select>
+                </div>
                 
                 <div>
                     <label className="text-sm text-[var(--text-secondary)]">{t('notes')}</label>
@@ -897,7 +928,6 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
                     </div>
                 </div>
 
-
                 <div className="flex gap-4">
                      <button onClick={onClose} className="flex-1 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">{t('cancel')}</button>
                      <FloatingButton onClick={handleSave} ariaLabel={t('save')} className="flex-1 h-12">
@@ -912,24 +942,33 @@ export const TimeEntryModal: React.FC<TimeEntryModalProps> = ({ entry, installat
 interface PanelLogModalProps {
     entry?: PanelEntry | null;
     installations: Installation[];
+    tasks: Task[];
     onClose: () => void;
-    onSave: (entryData: { installationId: string; date: number; count: number; notes?: string; }) => void;
+    onSave: (entryData: { installationId: string; date: number; count: number; taskId?: string, notes?: string; }) => void;
     t: (key: string) => string;
 }
 
-export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installations, onClose, onSave, t }) => {
+export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installations, tasks, onClose, onSave, t }) => {
     const isEditing = !!entry;
     const now = Date.now();
 
     const [installationId, setInstallationId] = useState(entry?.installationId || installations[0]?.id || '');
     const [date, setDate] = useState(toISODate(entry?.date || now));
     const [countStr, setCountStr] = useState(String(entry?.count || ''));
+    const [taskId, setTaskId] = useState(entry?.taskId || '');
     const [notes, setNotes] = useState(entry?.notes || '');
     const notesEditorRef = useRef<HTMLDivElement>(null);
 
+    const availableTasks = useMemo(() => tasks.filter(t => t.installationId === installationId), [tasks, installationId]);
+    
     useEffect(() => {
-        // Set the initial content of the editor only when the entry changes.
-        // This prevents React from overwriting user input on every re-render.
+        // Reset task if installation changes and task is no longer valid
+        if (!availableTasks.find(t => t.id === taskId)) {
+            setTaskId('');
+        }
+    }, [installationId, availableTasks, taskId]);
+
+    useEffect(() => {
         if (notesEditorRef.current) {
             notesEditorRef.current.innerHTML = entry?.notes || '';
         }
@@ -947,7 +986,7 @@ export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installatio
         }
         
         const dateTimestamp = new Date(date).getTime();
-        onSave({ installationId, date: dateTimestamp, count, notes });
+        onSave({ installationId, date: dateTimestamp, count, taskId: taskId || undefined, notes });
     };
 
     const handleNotesInput = (e: React.FormEvent<HTMLDivElement>) => {
@@ -962,7 +1001,7 @@ export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installatio
 
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
-            <Card className="w-full max-w-sm p-6 space-y-6 text-white">
+            <Card className="w-full max-w-sm p-6 space-y-4 text-white overflow-y-auto max-h-[90vh]">
                 <h2 className="font-display text-2xl font-bold text-center">{isEditing ? t('editPanelLog') : t('newPanelLog')}</h2>
                 
                 <div>
@@ -997,6 +1036,21 @@ export const PanelLogModal: React.FC<PanelLogModalProps> = ({ entry, installatio
                         className="custom-input mt-1"
                     />
                 </div>
+
+                <div>
+                    <label htmlFor="panelLogTask" className="text-sm text-[var(--text-secondary)]">{t('task')} ({t('optional')})</label>
+                    <select
+                        id="panelLogTask"
+                        value={taskId}
+                        onChange={(e) => setTaskId(e.target.value)}
+                        className="custom-input mt-1"
+                        disabled={!installationId || availableTasks.length === 0}
+                    >
+                        <option value="">{t('noTaskAssigned')}</option>
+                        {availableTasks.map(task => <option key={task.id} value={task.id}>{task.name}</option>)}
+                    </select>
+                </div>
+
                  <div>
                     <label className="text-sm text-[var(--text-secondary)]">{t('notes')}</label>
                     <div className="mt-1 border border-[var(--border-color)] rounded-xl">
@@ -1088,6 +1142,7 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({ onClose, onLog
 interface WorkEntryDetailModalProps {
     entry: WorkEntry;
     installation?: Installation;
+    tasks: Task[];
     onClose: () => void;
     onEdit: (entry: WorkEntry) => void;
     onDelete: (entryId: string) => void;
@@ -1096,8 +1151,9 @@ interface WorkEntryDetailModalProps {
     isReadOnly?: boolean;
 }
 
-export const WorkEntryDetailModal: React.FC<WorkEntryDetailModalProps> = ({ entry, installation, onClose, onEdit, onDelete, t, language, isReadOnly }) => {
+export const WorkEntryDetailModal: React.FC<WorkEntryDetailModalProps> = ({ entry, installation, tasks, onClose, onEdit, onDelete, t, language, isReadOnly }) => {
     const isTimeEntry = entry.type === 'hourly';
+    const task = entry.taskId ? tasks.find(t => t.id === entry.taskId) : null;
 
     return (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
@@ -1106,6 +1162,7 @@ export const WorkEntryDetailModal: React.FC<WorkEntryDetailModalProps> = ({ entr
 
                 <div className="space-y-2 text-sm">
                     <p><span className="font-semibold text-[var(--text-secondary)]">{t('installation')}:</span> {installation?.name || t('unknownInstallation')}</p>
+                    <p><span className="font-semibold text-[var(--text-secondary)]">{t('task')}:</span> {task?.name || t('noTaskAssigned')}</p>
                     {isTimeEntry ? (
                        <>
                          <p><span className="font-semibold text-[var(--text-secondary)]">{t('duration')}:</span> {formatDuration(entry.duration)}</p>
@@ -1139,3 +1196,61 @@ export const WorkEntryDetailModal: React.FC<WorkEntryDetailModalProps> = ({ entr
         </div>
     )
 }
+
+interface TaskManagementModalProps {
+    installation: Installation;
+    tasks: Task[];
+    onClose: () => void;
+    onAddTask: (name: string) => void;
+    onDeleteTask: (taskId: string) => void;
+    t: (key: string) => string;
+}
+
+export const TaskManagementModal: React.FC<TaskManagementModalProps> = ({ installation, tasks, onClose, onAddTask, onDeleteTask, t }) => {
+    const [newTaskName, setNewTaskName] = useState('');
+
+    const handleAddTask = () => {
+        if (newTaskName.trim()) {
+            onAddTask(newTaskName.trim());
+            setNewTaskName('');
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <Card className="w-full max-w-sm p-6 space-y-6 text-white">
+                <h2 className="font-display text-2xl font-bold text-center truncate">{t('tasks')}</h2>
+                <p className="text-center text-[var(--text-secondary)] -mt-4 truncate">{installation.name}</p>
+                
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {tasks.length === 0 ? (
+                         <p className="text-center text-gray-500 py-4">{t('noTasksForInstallation')}</p>
+                    ) : tasks.map(task => (
+                        <div key={task.id} className="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+                            <span>{task.name}</span>
+                            <button onClick={() => onDeleteTask(task.id)} className="text-red-500 hover:text-red-400">
+                                <TrashIcon />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex gap-2">
+                    <input
+                        type="text"
+                        value={newTaskName}
+                        onChange={(e) => setNewTaskName(e.target.value)}
+                        placeholder={t('newTaskName')}
+                        className="custom-input flex-grow"
+                        onKeyPress={e => e.key === 'Enter' && handleAddTask()}
+                    />
+                    <FloatingButton onClick={handleAddTask} ariaLabel={t('addTask')} className="w-12 h-12">
+                        <PlusIcon />
+                    </FloatingButton>
+                </div>
+
+                <button onClick={onClose} className="w-full p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors">{t('cancel')}</button>
+            </Card>
+        </div>
+    );
+};

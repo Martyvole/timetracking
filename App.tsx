@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import type { Installation, TimeEntry, PanelEntry, WorkEntry, Screen, User } from './types';
+import type { Installation, TimeEntry, PanelEntry, WorkEntry, Screen, User, Task } from './types';
 import { useLocalStorage, useHapticFeedback, useTranslation } from './hooks';
 import { 
     BottomNav, TimerDisplay, StatsDashboard, InstallationList, InstallationModal, SettingsScreen, UserSelectionScreen, 
     OfflineIndicator, FloatingButton, PlayIcon, PauseIcon, StopIcon, WorkLogScreen, TimeEntryModal, PanelLogModal, AddEntryChoiceModal, AdminLoginModal,
-    WorkEntryDetailModal
+    WorkEntryDetailModal, TaskManagementModal
 } from './components';
 
 // Initial data for a new user
 const initialInstallations: Installation[] = [];
 const initialWorkEntries: WorkEntry[] = [];
+const initialTasks: Task[] = [];
 const ADMIN_PASSWORD = 'Zacnetemakathovada2025';
 const ADMIN_USER: User = { id: 'admin', name: 'Admin', isAdmin: true };
 
@@ -24,10 +25,12 @@ function App() {
   // Data for the current logged-in user
   const [installations, setInstallations] = useLocalStorage<Installation[]>(`solarwork_installations_${currentUserId}`, initialInstallations);
   const [workEntries, setWorkEntries] = useLocalStorage<WorkEntry[]>(`solarwork_entries_${currentUserId}`, initialWorkEntries);
-  
+  const [tasks, setTasks] = useLocalStorage<Task[]>(`solarwork_tasks_${currentUserId}`, initialTasks);
+
   // Aggregated data for admin view
   const [allWorkEntries, setAllWorkEntries] = useState<WorkEntry[]>([]);
   const [allInstallations, setAllInstallations] = useState<Installation[]>([]);
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
 
   const [activeScreen, setActiveScreen] = useState<Screen>('timer');
   const [hourlyWage, setHourlyWage] = useLocalStorage<number>(`solarwork_wage_${currentUserId}`, 15);
@@ -48,6 +51,7 @@ function App() {
   const [editingWorkEntry, setEditingWorkEntry] = useState<WorkEntry | null>(null);
   const [isAdminLoginOpen, setAdminLoginOpen] = useState(false);
   const [detailViewEntry, setDetailViewEntry] = useState<WorkEntry | null>(null);
+  const [managingTasksForInstallation, setManagingTasksForInstallation] = useState<Installation | null>(null);
   
   // Online status
   const [isOnline, setIsOnline] = useState(navigator.onLine);
@@ -92,20 +96,25 @@ function App() {
         const otherUsers = users.filter(u => !u.isAdmin);
         const aggregatedEntries: WorkEntry[] = [];
         const aggregatedInstallations: Installation[] = [];
+        const aggregatedTasks: Task[] = [];
         
         otherUsers.forEach(user => {
             const userEntries = JSON.parse(localStorage.getItem(`solarwork_entries_${user.id}`) || '[]') as WorkEntry[];
             const userInstallations = JSON.parse(localStorage.getItem(`solarwork_installations_${user.id}`) || '[]') as Installation[];
+            const userTasks = JSON.parse(localStorage.getItem(`solarwork_tasks_${user.id}`) || '[]') as Task[];
             aggregatedEntries.push(...userEntries);
             aggregatedInstallations.push(...userInstallations);
+            aggregatedTasks.push(...userTasks);
         });
 
         setAllWorkEntries(aggregatedEntries);
         setAllInstallations(aggregatedInstallations);
+        setAllTasks(aggregatedTasks);
 
         // Load admin's own settings, but clear personal data displays
         setInstallations([]);
         setWorkEntries([]);
+        setTasks([]);
         setHourlyWage(JSON.parse(localStorage.getItem(`solarwork_wage_admin`) || '15'));
         setPanelRate(JSON.parse(localStorage.getItem(`solarwork_panelrate_admin`) || '5'));
         setCurrency(JSON.parse(localStorage.getItem(`solarwork_currency_admin`) || '"EUR"'));
@@ -114,14 +123,16 @@ function App() {
         // Regular user: load their own data
         setInstallations(JSON.parse(localStorage.getItem(`solarwork_installations_${currentUserId}`) || '[]'));
         setWorkEntries(JSON.parse(localStorage.getItem(`solarwork_entries_${currentUserId}`) || '[]'));
+        setTasks(JSON.parse(localStorage.getItem(`solarwork_tasks_${currentUserId}`) || '[]'));
         setHourlyWage(JSON.parse(localStorage.getItem(`solarwork_wage_${currentUserId}`) || '15'));
         setPanelRate(JSON.parse(localStorage.getItem(`solarwork_panelrate_${currentUserId}`) || '5'));
         setCurrency(JSON.parse(localStorage.getItem(`solarwork_currency_${currentUserId}`) || '"EUR"'));
         // Clear admin data
         setAllWorkEntries([]);
         setAllInstallations([]);
+        setAllTasks([]);
     }
-  }, [currentUserId, users, setInstallations, setWorkEntries, setHourlyWage, setPanelRate, setCurrency]);
+  }, [currentUserId, users, setInstallations, setWorkEntries, setTasks, setHourlyWage, setPanelRate, setCurrency]);
 
 
   // --- Handlers ---
@@ -151,21 +162,7 @@ function App() {
       setCurrentUserId(null);
   };
   
-  const handleSelectInstallation = useCallback((installationId: string) => {
-      if (activeTimer) {
-          handleStopTimer(true); // silent stop
-          handleStartTimer(installationId);
-      } else {
-           const newTimer = { id: `temp_${Date.now()}`, startTime: Date.now(), installationId, duration: 0 };
-           setActiveTimer(newTimer);
-           setElapsedTime(0);
-           setIsPaused(true);
-      }
-      triggerHaptic('light');
-  }, [activeTimer, triggerHaptic]);
-
-
-  const handleStartTimer = (selectedInstallationId?: string) => {
+  const handleStartTimer = useCallback((selectedInstallationId?: string) => {
     const installationId = selectedInstallationId || activeTimer?.installationId;
     if (!installationId) {
       alert(t('selectInstallationFirst'));
@@ -180,24 +177,9 @@ function App() {
     setElapsedTime(0);
     setIsPaused(false);
     triggerHaptic('success');
-  };
-  
-  const handlePauseTimer = () => {
-    if (!activeTimer) return;
-    const pausedDuration = activeTimer.duration + (Date.now() - activeTimer.startTime) / 1000;
-    setActiveTimer(prev => prev ? { ...prev, duration: pausedDuration } : null);
-    setIsPaused(true);
-    triggerHaptic('light');
-  };
+  }, [activeTimer, currentUser, t, triggerHaptic]);
 
-  const handleResumeTimer = () => {
-      if (!activeTimer) return;
-      setActiveTimer(prev => prev ? { ...prev, startTime: Date.now() } : null);
-      setIsPaused(false);
-      triggerHaptic('light');
-  };
-
-  const handleStopTimer = (silent = false) => {
+  const handleStopTimer = useCallback((silent = false) => {
     if (!activeTimer) return;
     const endTime = Date.now();
     const finalDuration = activeTimer.duration + (isPaused ? 0 : (endTime - activeTimer.startTime) / 1000);
@@ -218,40 +200,99 @@ function App() {
     if (!silent) {
         triggerHaptic('success');
     }
-  };
+  }, [activeTimer, isPaused, currentUserId, setWorkEntries, triggerHaptic]);
+  
+  const handleSelectInstallation = useCallback((installationId: string) => {
+      if (activeTimer) {
+          handleStopTimer(true); // silent stop
+          handleStartTimer(installationId);
+      } else {
+           const newTimer = { id: `temp_${Date.now()}`, startTime: Date.now(), installationId, duration: 0 };
+           setActiveTimer(newTimer);
+           setElapsedTime(0);
+           setIsPaused(true);
+      }
+      triggerHaptic('light');
+  }, [activeTimer, triggerHaptic, handleStartTimer, handleStopTimer]);
+  
+  const handlePauseTimer = useCallback(() => {
+    if (!activeTimer) return;
+    const pausedDuration = activeTimer.duration + (Date.now() - activeTimer.startTime) / 1000;
+    setActiveTimer(prev => prev ? { ...prev, duration: pausedDuration } : null);
+    setIsPaused(true);
+    triggerHaptic('light');
+  }, [activeTimer, triggerHaptic]);
+
+  const handleResumeTimer = useCallback(() => {
+      if (!activeTimer) return;
+      setActiveTimer(prev => prev ? { ...prev, startTime: Date.now() } : null);
+      setIsPaused(false);
+      triggerHaptic('light');
+  }, [activeTimer, triggerHaptic]);
   
   // Installation CRUD
-  const handleSaveInstallation = (installationData: { name: string, color: string }) => {
+  const handleSaveInstallation = useCallback((installationData: { name: string, color: string }) => {
     if (editingInstallation) {
-      setInstallations(installations.map(p => p.id === editingInstallation.id ? { ...p, ...installationData } : p));
+      setInstallations(prev => prev.map(p => p.id === editingInstallation.id ? { ...p, ...installationData } : p));
     } else {
       const newInstallation: Installation = { id: `proj_${Date.now()}`, userId: currentUserId!, ...installationData };
-      setInstallations([...installations, newInstallation]);
+      setInstallations(prev => [...prev, newInstallation]);
     }
     setInstallationModalOpen(false);
     setEditingInstallation(null);
-  };
+  }, [editingInstallation, currentUserId, setInstallations]);
   
-  const handleDeleteInstallation = (installationId: string) => {
+  const handleDeleteInstallation = useCallback((installationId: string) => {
      const entriesForInstallation = workEntries.filter(e => e.installationId === installationId);
      let confirmed = false;
      if (entriesForInstallation.length > 0) {
         confirmed = window.confirm(t('deleteInstallationWithEntriesConfirm', entriesForInstallation.length));
         if (confirmed) {
-            setWorkEntries(workEntries.filter(e => e.installationId !== installationId));
+            setWorkEntries(prev => prev.filter(e => e.installationId !== installationId));
         }
      } else {
         confirmed = window.confirm(t('deleteInstallationConfirm'));
      }
 
      if (confirmed) {
-        setInstallations(installations.filter(p => p.id !== installationId));
+        setInstallations(prev => prev.filter(p => p.id !== installationId));
+        setTasks(prev => prev.filter(t => t.installationId !== installationId));
         triggerHaptic('error');
      }
-  };
+  }, [workEntries, t, triggerHaptic, setWorkEntries, setInstallations, setTasks]);
+
+  // Task CRUD
+    const handleAddTask = useCallback((name: string) => {
+        if (!managingTasksForInstallation) return;
+        const newTask: Task = {
+            id: `task_${Date.now()}`,
+            name,
+            installationId: managingTasksForInstallation.id,
+            userId: currentUserId!,
+        };
+        setTasks(prev => [...prev, newTask]);
+    }, [managingTasksForInstallation, currentUserId, setTasks]);
+
+    const handleDeleteTask = useCallback((taskId: string) => {
+        const entriesWithTask = workEntries.filter(e => e.taskId === taskId);
+        let confirmed = false;
+        if (entriesWithTask.length > 0) {
+            confirmed = window.confirm(t('deleteTaskConfirm', entriesWithTask.length));
+            if (confirmed) {
+                setWorkEntries(prev => prev.map(e => e.taskId === taskId ? { ...e, taskId: undefined } : e));
+            }
+        } else {
+            confirmed = window.confirm(t('deleteTaskConfirmNoEntries'));
+        }
+
+        if (confirmed) {
+            setTasks(prev => prev.filter(t => t.id !== taskId));
+            triggerHaptic('error');
+        }
+    }, [workEntries, t, triggerHaptic, setTasks, setWorkEntries]);
   
   // Work Entry CRUD
-  const handleSaveTimeEntry = (entryData: { installationId: string, startTime: number, endTime: number, notes?: string }) => {
+  const handleSaveTimeEntry = useCallback((entryData: { installationId: string, startTime: number, endTime: number, taskId?: string, notes?: string }) => {
       const duration = (entryData.endTime - entryData.startTime) / 1000;
       if (editingWorkEntry) {
           setWorkEntries(entries => entries.map(e => e.id === editingWorkEntry.id ? { ...e, ...entryData, duration, type: 'hourly' } as TimeEntry : e));
@@ -268,9 +309,9 @@ function App() {
       }
       setTimeEntryModalOpen(false);
       setEditingWorkEntry(null);
-  };
+  }, [editingWorkEntry, currentUserId, setWorkEntries]);
 
-  const handleSavePanelEntry = (entryData: { installationId: string, date: number, count: number, notes?: string }) => {
+  const handleSavePanelEntry = useCallback((entryData: { installationId: string, date: number, count: number, taskId?: string, notes?: string }) => {
       if (editingWorkEntry) {
           setWorkEntries(entries => entries.map(e => e.id === editingWorkEntry.id ? { ...e, ...entryData, type: 'panels' } as PanelEntry : e));
       } else {
@@ -284,17 +325,17 @@ function App() {
       }
       setPanelLogModalOpen(false);
       setEditingWorkEntry(null);
-  };
+  }, [editingWorkEntry, currentUserId, setWorkEntries]);
   
-  const handleDeleteWorkEntry = (entryId: string) => {
+  const handleDeleteWorkEntry = useCallback((entryId: string) => {
       if (window.confirm(t('deleteEntryConfirm'))) {
           setWorkEntries(entries => entries.filter(e => e.id !== entryId));
           setDetailViewEntry(null);
           triggerHaptic('error');
       }
-  };
+  }, [t, triggerHaptic, setWorkEntries]);
 
-    const handleAddEntry = (type: 'time' | 'panel') => {
+    const handleAddEntry = useCallback((type: 'time' | 'panel') => {
         setAddEntryChoiceModalOpen(false);
         setEditingWorkEntry(null);
         if (type === 'time') {
@@ -302,9 +343,9 @@ function App() {
         } else {
             setPanelLogModalOpen(true);
         }
-    };
+    }, []);
 
-    const handleEditEntry = (entry: WorkEntry) => {
+    const handleEditEntry = useCallback((entry: WorkEntry) => {
         setDetailViewEntry(null);
         setEditingWorkEntry(entry);
         if (entry.type === 'hourly') {
@@ -312,12 +353,12 @@ function App() {
         } else {
             setPanelLogModalOpen(true);
         }
-    };
+    }, []);
 
   // Data Management
-  const handleExport = () => {
+  const handleExport = useCallback(() => {
     try {
-      const data = { installations, workEntries };
+      const data = { installations, workEntries, tasks };
       const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(data, null, 2))}`;
       const link = document.createElement("a");
       link.href = jsonString;
@@ -326,9 +367,9 @@ function App() {
     } catch (e) {
       alert(t('exportError'));
     }
-  };
+  }, [installations, workEntries, tasks, currentUser, t]);
 
-  const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     if (!window.confirm(t('importConfirm'))) return;
@@ -341,8 +382,10 @@ function App() {
         if (Array.isArray(data.installations) && Array.isArray(data.workEntries)) {
           const importedInstallations = data.installations.map((p: any) => ({...p, userId: currentUserId}));
           const importedEntries = data.workEntries.map((e: any) => ({...e, userId: currentUserId}));
+          const importedTasks = (data.tasks || []).map((t: any) => ({...t, userId: currentUserId}));
           setInstallations(prev => [...prev, ...importedInstallations]);
           setWorkEntries(prev => [...prev, ...importedEntries]);
+          setTasks(prev => [...prev, ...importedTasks]);
           alert(t('importSuccess'));
         } else {
           throw new Error("Invalid file structure");
@@ -353,15 +396,16 @@ function App() {
     };
     reader.readAsText(file);
     event.target.value = '';
-  };
+  }, [currentUserId, t, setInstallations, setWorkEntries, setTasks]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     if (currentUser && window.confirm(t('resetConfirm', currentUser.name))) {
       setInstallations([]);
       setWorkEntries([]);
+      setTasks([]);
       alert(t('resetSuccess', currentUser.name));
     }
-  };
+  }, [currentUser, t, setInstallations, setWorkEntries, setTasks]);
 
   // --- Memos for display data ---
   const displayedEntries = useMemo(() => {
@@ -379,13 +423,14 @@ function App() {
       if (adminView === 'all') {
         return allInstallations;
       }
-       const userInstallations = allInstallations.filter(p => p.userId === adminView);
-       const installationIds = new Set(userInstallations.map(p => p.id));
-       const relevantEntries = allWorkEntries.filter(e => e.userId === adminView && installationIds.has(e.installationId));
-       return userInstallations;
+       return allInstallations.filter(p => p.userId === adminView);
     }
     return installations;
-  }, [currentUser, adminView, installations, allInstallations, allWorkEntries]);
+  }, [currentUser, adminView, installations, allInstallations]);
+
+  const displayedTasks = useMemo(() => {
+      return currentUser?.isAdmin ? allTasks : tasks;
+  }, [currentUser, tasks, allTasks]);
 
 
   // --- Render Logic ---
@@ -413,6 +458,7 @@ function App() {
                     onCreateInstallation={() => { setEditingInstallation(null); setInstallationModalOpen(true); }}
                     onEditInstallation={(p) => { setEditingInstallation(p); setInstallationModalOpen(true); }}
                     onDeleteInstallation={handleDeleteInstallation}
+                    onManageTasks={setManagingTasksForInstallation}
                     onHapticTrigger={triggerHaptic}
                     t={t}
                     isReadOnly={currentUser?.isAdmin}
@@ -511,6 +557,15 @@ function App() {
             t={t}
         />}
 
+        {managingTasksForInstallation && <TaskManagementModal
+            installation={managingTasksForInstallation}
+            tasks={tasks.filter(t => t.installationId === managingTasksForInstallation.id)}
+            onClose={() => setManagingTasksForInstallation(null)}
+            onAddTask={handleAddTask}
+            onDeleteTask={handleDeleteTask}
+            t={t}
+        />}
+
         {isAddEntryChoiceModalOpen && <AddEntryChoiceModal
             onClose={() => setAddEntryChoiceModalOpen(false)}
             onSelect={handleAddEntry}
@@ -520,6 +575,7 @@ function App() {
         {isTimeEntryModalOpen && <TimeEntryModal 
             entry={editingWorkEntry?.type === 'hourly' ? editingWorkEntry : null}
             installations={installations}
+            tasks={tasks}
             onClose={() => { setTimeEntryModalOpen(false); setEditingWorkEntry(null); }}
             onSave={handleSaveTimeEntry}
             t={t}
@@ -528,6 +584,7 @@ function App() {
         {isPanelLogModalOpen && <PanelLogModal 
             entry={editingWorkEntry?.type === 'panels' ? editingWorkEntry : null}
             installations={installations}
+            tasks={tasks}
             onClose={() => { setPanelLogModalOpen(false); setEditingWorkEntry(null); }}
             onSave={handleSavePanelEntry}
             t={t}
@@ -536,6 +593,7 @@ function App() {
         {detailViewEntry && <WorkEntryDetailModal 
             entry={detailViewEntry}
             installation={displayedInstallations.find(p => p.id === detailViewEntry.installationId)}
+            tasks={displayedTasks}
             onClose={() => setDetailViewEntry(null)}
             onEdit={handleEditEntry}
             onDelete={handleDeleteWorkEntry}
