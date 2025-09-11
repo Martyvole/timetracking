@@ -4,6 +4,11 @@
   "description": "A PWA for tracking work on solar power plant installations.",
   "icons": [
     {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
       "src": "/icons/icon-192x192.png",
       "type": "image/png",
       "sizes": "192x192"

@@ -14,15 +14,29 @@ export function useLocalStorage<T,>(key: string, initialValue: T): [T, React.Dis
     }
   });
 
-  const setValue: React.Dispatch<React.SetStateAction<T>> = (value) => {
+  // When the key changes, we need to re-read the value from localStorage
+  useEffect(() => {
     try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        const item = window.localStorage.getItem(key);
+        setStoredValue(item ? JSON.parse(item) : initialValue);
+    } catch (error) {
+        console.error(error);
+        setStoredValue(initialValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  const setValue: React.Dispatch<React.SetStateAction<T>> = useCallback((value) => {
+    try {
+      setStoredValue(currentStoredValue => {
+        const valueToStore = value instanceof Function ? value(currentStoredValue) : value;
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        return valueToStore;
+      });
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [key]);
 
   return [storedValue, setValue];
 }

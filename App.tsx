@@ -7,6 +7,30 @@ import {
     WorkEntryDetailModal, TaskManagementModal
 } from './components';
 
+// This function runs once when the module is loaded.
+// It ensures that if no users exist in local storage, a default user is created and logged in.
+const initializeDefaultUser = () => {
+  try {
+    const usersStr = window.localStorage.getItem('solarwork_users');
+    const users = usersStr ? JSON.parse(usersStr) : [];
+    
+    // Only create a default user if there are absolutely no users.
+    if (users.length === 0) {
+      const defaultUser: User = { id: `user_${Date.now()}`, name: 'User' };
+      window.localStorage.setItem('solarwork_users', JSON.stringify([defaultUser]));
+      window.localStorage.setItem('solarwork_current_user', JSON.stringify(defaultUser.id));
+    }
+  } catch (error) {
+    console.error("Failed to initialize default user:", error);
+    // If something goes wrong, clear the storage to be safe
+    window.localStorage.removeItem('solarwork_users');
+    window.localStorage.removeItem('solarwork_current_user');
+  }
+};
+
+initializeDefaultUser();
+
+
 // Initial data for a new user
 const initialInstallations: Installation[] = [];
 const initialWorkEntries: WorkEntry[] = [];
@@ -438,7 +462,8 @@ function App() {
     switch(activeScreen) {
       case 'stats':
         return <StatsDashboard 
-                    entries={displayedEntries} 
+                    entries={displayedEntries}
+                    installations={displayedInstallations} 
                     hourlyWage={hourlyWage}
                     panelRate={panelRate}
                     currency={currency}

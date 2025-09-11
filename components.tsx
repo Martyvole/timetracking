@@ -1,6 +1,7 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import type { Installation, WorkEntry, TimeEntry, PanelEntry, Screen, User, Task } from './types';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, Rectangle } from 'recharts';
+import { GoogleGenAI } from "@google/genai";
 
 // --- Icon Components ---
 
@@ -199,6 +200,7 @@ export const TimerDisplay: React.FC<TimerDisplayProps> = ({ elapsedTime, earning
 
 interface StatsDashboardProps {
     entries: WorkEntry[];
+    installations: Installation[];
     hourlyWage: number;
     panelRate: number;
     currency: string;
@@ -211,10 +213,18 @@ interface StatsDashboardProps {
     setAdminView: (view: string) => void;
 }
 
-export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, hourlyWage, panelRate, currency, userName, t, language, isAdmin, allUsers, adminView, setAdminView }) => {
-    const { totalHours, totalPanels, totalEarnings, chartData } = useMemo(() => {
-        const timeEntries = entries.filter(e => e.type === 'hourly') as TimeEntry[];
-        const panelEntries = entries.filter(e => e.type === 'panels') as PanelEntry[];
+export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, installations, hourlyWage, panelRate, currency, userName, t, language, isAdmin, allUsers, adminView, setAdminView }) => {
+    const [installationFilter, setInstallationFilter] = useState('all');
+    const [aiReport, setAiReport] = useState<string | null>(null);
+    const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+
+    const { totalHours, totalPanels, totalEarnings, chartData, filteredEntries } = useMemo(() => {
+        const finalEntries = installationFilter === 'all'
+            ? entries
+            : entries.filter(e => e.installationId === installationFilter);
+        
+        const timeEntries = finalEntries.filter(e => e.type === 'hourly') as TimeEntry[];
+        const panelEntries = finalEntries.filter(e => e.type === 'panels') as PanelEntry[];
 
         const totalHours = timeEntries.reduce((acc, e) => acc + e.duration, 0) / 3600;
         const totalPanels = panelEntries.reduce((acc, e) => acc + e.count, 0);
@@ -242,8 +252,8 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, hourlyW
         });
         const chartData = Object.values(dataByDay);
 
-        return { totalHours, totalPanels, totalEarnings, chartData };
-    }, [entries, hourlyWage, panelRate, language]);
+        return { totalHours, totalPanels, totalEarnings, chartData, filteredEntries: finalEntries };
+    }, [entries, hourlyWage, panelRate, language, installationFilter]);
 
     const formatCurrency = (amount: number) => {
          return new Intl.NumberFormat(language === 'cs' ? 'cs-CZ' : 'en-US', {
@@ -255,69 +265,147 @@ export const StatsDashboard: React.FC<StatsDashboardProps> = ({ entries, hourlyW
 
     const nonAdminUsers = useMemo(() => allUsers.filter(u => !u.isAdmin), [allUsers]);
 
+    const handleGenerateReport = async () => {
+        setIsGeneratingReport(true);
+        setAiReport(null);
+        try {
+            const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+            
+            const installationMap = new Map(installations.map(p => [p.id, p.name]));
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+            const recentEntries = filteredEntries.filter(entry => {
+                const entryDate = new Date(entry.type === 'hourly' ? entry.startTime : entry.date);
+                return entryDate >= sevenDaysAgo;
+            });
+    
+            if (recentEntries.length === 0) {
+                setAiReport(`<p>${t('noRecentDataForReport')}</p>`);
+                setIsGeneratingReport(false);
+                return;
+            }
+    
+            const promptData = recentEntries.map(e => ({
+                type: e.type,
+                duration_hours: e.type === 'hourly' ? (e.duration / 3600).toFixed(2) : undefined,
+                panel_count: e.type === 'panels' ? e.count : undefined,
+                installationName: installationMap.get(e.installationId) || 'Unknown',
+                date: new Date(e.type === 'hourly' ? e.startTime : e.date).toLocaleDateString()
+            }));
+    
+            const prompt = `You are a helpful assistant for solar panel installers. Based on the following JSON data of work logs from the last 7 days, provide a concise and encouraging summary of the user's work. Highlight productivity trends, most common tasks/installations, and earnings. Format the output as simple HTML using <p> and <strong> tags. Respond in ${language === 'cs' ? 'Czech' : 'English'}. Data: ${JSON.stringify(promptData)}`;
+    
+            const response = await ai.models.generateContent({
+                model: 'gemini-2.5-flash',
+                contents: prompt,
+            });
+    
+            setAiReport(response.text);
+    
+        } catch (error) {
+            console.error("AI Report generation failed:", error);
+            setAiReport(`<p class="text-red-500">${t('aiReportError')}</p>`);
+        } finally {
+            setIsGeneratingReport(false);
+        }
+    };
+
     return (
         <div className="p-4 space-y-6 text-white fade-in">
             <h2 className="font-display text-4xl font-extrabold text-center">{t('statistics')}</h2>
             {userName && <p className="text-center text-[var(--text-secondary)] -mt-4">{t('forUser', userName)}</p>}
             
-            <div className={`grid grid-cols-2 ${isAdmin ? 'grid-rows-4' : 'grid-rows-3'} gap-4 auto-rows-fr h-[calc(100dvh-200px)]`}>
-                 {isAdmin && (
-                     <div className="col-span-2">
-                         <Card className="p-4 h-full">
+            <Card className="p-4">
+                 <h3 className="text-lg font-bold text-[var(--text-secondary)] mb-4">Filters</h3>
+                 <div className="flex flex-col md:flex-row gap-4">
+                     {isAdmin && (
+                         <div className="flex-1">
+                            <label htmlFor="userFilter" className="text-sm text-[var(--text-secondary)]">{t('userProfile')}</label>
                              <select 
+                                id="userFilter"
                                 value={adminView}
                                 onChange={(e) => setAdminView(e.target.value)}
-                                className="custom-input w-full h-full text-center font-bold"
+                                className="custom-input w-full mt-1"
                              >
                                 <option value="all">{t('allUsers')}</option>
                                 {nonAdminUsers.map(user => <option key={user.id} value={user.id}>{user.name}</option>)}
                              </select>
-                         </Card>
+                         </div>
+                     )}
+                     <div className="flex-1">
+                        <label htmlFor="installationFilter" className="text-sm text-[var(--text-secondary)]">{t('filterInstallation')}</label>
+                        <select
+                            id="installationFilter"
+                            value={installationFilter}
+                            onChange={(e) => setInstallationFilter(e.target.value)}
+                            className="custom-input w-full mt-1"
+                        >
+                            <option value="all">{t('allInstallations')}</option>
+                            {installations.map(inst => <option key={inst.id} value={inst.id}>{inst.name}</option>)}
+                        </select>
                      </div>
-                 )}
-                <div className="col-span-2">
-                    <Card className="p-4 flex flex-col justify-center items-center h-full text-center bg-gradient-to-br from-[var(--secondary)] to-black/20">
-                        <p className="text-[var(--text-secondary)] text-sm">{t('totalEarnings')}</p>
-                        <p className="text-5xl font-bold font-timer text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)]">{formatCurrency(totalEarnings)}</p>
-                    </Card>
-                </div>
-                 <div className="col-span-1">
-                    <Card className="p-4 flex flex-col justify-center items-center h-full text-center">
-                        <p className="text-[var(--text-secondary)] text-sm">{t('totalHours')}</p>
-                        <p className="text-4xl font-bold font-timer">{totalHours.toFixed(1)}</p>
-                    </Card>
                  </div>
-                 <div className="col-span-1">
-                     <Card className="p-4 flex flex-col justify-center items-center h-full text-center">
-                         <p className="text-[var(--text-secondary)] text-sm">{t('totalPanels')}</p>
-                        <p className="text-4xl font-bold font-timer">{totalPanels}</p>
-                    </Card>
-                 </div>
-                <div className="col-span-2">
-                    <Card className="p-4 h-full">
-                        <h3 className="text-lg font-bold mb-4 ml-2">{t('weeklyHours')}</h3>
-                        <ResponsiveContainer width="100%" height="calc(100% - 40px)">
-                            <BarChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 20 }}>
-                                <XAxis dataKey="name" stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
-                                <Tooltip
-                                    contentStyle={{ background: 'var(--primary)', border: '1px solid var(--border-color)', borderRadius: '16px', color: 'white' }}
-                                    cursor={<Rectangle fill="rgba(255,255,255,0.05)" />}
-                                />
-                                <Bar dataKey="hours" radius={[8, 8, 0, 0]}>
-                                    {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill="url(#colorUv)" />)}
-                                </Bar>
-                                 <defs>
-                                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="var(--accent-1)" stopOpacity={0.8}/>
-                                        <stop offset="95%" stopColor="var(--accent-2)" stopOpacity={0.8}/>
-                                    </linearGradient>
-                                </defs>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </Card>
-                </div>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <Card className="p-4 flex flex-col justify-center items-center text-center bg-gradient-to-br from-[var(--secondary)] to-black/20 md:col-span-3">
+                    <p className="text-[var(--text-secondary)] text-sm">{t('totalEarnings')}</p>
+                    <p className="text-5xl font-bold font-timer text-transparent bg-clip-text bg-gradient-to-r from-[var(--accent-1)] to-[var(--accent-2)]">{formatCurrency(totalEarnings)}</p>
+                </Card>
+                <Card className="p-4 flex flex-col justify-center items-center h-full text-center">
+                    <p className="text-[var(--text-secondary)] text-sm">{t('totalHours')}</p>
+                    <p className="text-4xl font-bold font-timer">{totalHours.toFixed(1)}</p>
+                </Card>
+                 <Card className="p-4 flex flex-col justify-center items-center h-full text-center">
+                     <p className="text-[var(--text-secondary)] text-sm">{t('totalPanels')}</p>
+                    <p className="text-4xl font-bold font-timer">{totalPanels}</p>
+                </Card>
             </div>
+
+            <Card className="p-4 h-80">
+                <h3 className="text-lg font-bold mb-4 ml-2">{t('weeklyHours')}</h3>
+                <ResponsiveContainer width="100%" height="calc(100% - 40px)">
+                    <BarChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
+                        <XAxis dataKey="name" stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis stroke="var(--text-secondary)" fontSize={12} tickLine={false} axisLine={false} />
+                        <Tooltip
+                            contentStyle={{ background: 'var(--primary)', border: '1px solid var(--border-color)', borderRadius: '16px', color: 'white' }}
+                            cursor={<Rectangle fill="rgba(255,255,255,0.05)" />}
+                        />
+                        <Bar dataKey="hours" radius={[8, 8, 0, 0]}>
+                            {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill="url(#colorUv)" />)}
+                        </Bar>
+                         <defs>
+                            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="var(--accent-1)" stopOpacity={0.8}/>
+                                <stop offset="95%" stopColor="var(--accent-2)" stopOpacity={0.8}/>
+                            </linearGradient>
+                        </defs>
+                    </BarChart>
+                </ResponsiveContainer>
+            </Card>
+            
+            <Card className="p-4 space-y-4">
+                <div className="flex justify-between items-center">
+                    <h3 className="text-lg font-bold">{t('weeklySummary')}</h3>
+                    <FloatingButton 
+                        onClick={handleGenerateReport} 
+                        disabled={isGeneratingReport} 
+                        ariaLabel={t('generateAIReport')}
+                        className="w-auto h-10 px-4 !rounded-lg text-sm"
+                    >
+                        <span>{isGeneratingReport ? t('generatingReport') : t('generateAIReport')}</span>
+                    </FloatingButton>
+                </div>
+                {aiReport && (
+                    <div 
+                        className="text-sm text-gray-300 space-y-2"
+                        dangerouslySetInnerHTML={{ __html: aiReport }}
+                    />
+                )}
+            </Card>
+
         </div>
     );
 };

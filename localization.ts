@@ -86,12 +86,13 @@ export const translations = {
     totalEarnings: 'Total Earnings',
     weeklyHours: 'Weekly Hours',
     allUsers: 'All Users',
-    filterInstallation: 'Filter Installation',
+    filterInstallation: 'Filter by Installation',
     allInstallations: 'All Installations',
     generateAIReport: 'Generate AI Report',
-    generatingReport: 'Generating Report...',
+    generatingReport: 'Generating...',
     weeklySummary: 'Weekly AI Summary',
     aiReportError: 'Could not generate AI report. Please try again later.',
+    noRecentDataForReport: 'No data from the last 7 days available to generate a report.',
 
     // Task Management
     tasks: 'Tasks',
@@ -230,12 +231,13 @@ export const translations = {
     totalEarnings: 'Celkový výdělek',
     weeklyHours: 'Týdenní hodiny',
     allUsers: 'Všichni uživatelé',
-    filterInstallation: 'Filtrovat instalaci',
+    filterInstallation: 'Filtrovat podle instalace',
     allInstallations: 'Všechny instalace',
     generateAIReport: 'Generovat AI report',
-    generatingReport: 'Generuji report...',
+    generatingReport: 'Generuji...',
     weeklySummary: 'Týdenní AI souhrn',
     aiReportError: 'Nepodařilo se vygenerovat AI report. Zkuste to prosím později.',
+    noRecentDataForReport: 'Pro vygenerování reportu nejsou k dispozici žádná data za posledních 7 dní.',
 
     // Task Management
     tasks: 'Úkoly',
